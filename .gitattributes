@@ -1,0 +1,6 @@
+// 예시
+git lfs track "*.uasset" ! 언리얼 내 에셋 파일 확장자
+git lfs track "*.umap"   ! 언리얼 내 레벨 파일 확장자
+git lfs track "*.png"    ! 이미지 파일 확장자
+git lfs track "*.wav"    ! 음원 파일 확장자
+git lfs track "*.bk2"    ! 언리얼 엔진 내 영상 작업물 확장자
