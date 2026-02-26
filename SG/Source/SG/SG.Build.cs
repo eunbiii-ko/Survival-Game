@@ -8,7 +8,14 @@ public class SG : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
+			// GAS
+			"GameplayTags",
+			// Game Features
+			"ModularGameplay"
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
