@@ -2,11 +2,6 @@
 [attr]lockonly lockable
 [attr]lfs filter=lfs diff=lfs merge=binary -text
 [attr]lfstext filter=lfs diff=lfstext merge=lfstext -text
-git lfs track "*.uasset" ! 언리얼 내 에셋 파일 확장자
-git lfs track "*.umap"   ! 언리얼 내 레벨 파일 확장자
-git lfs track "*.png"    ! 이미지 파일 확장자
-git lfs track "*.wav"    ! 음원 파일 확장자
-git lfs track "*.bk2"    ! 언리얼 엔진 내 영상 작업물 확장자
 # Unreal Engine file types.
 *.uasset filter=lfs diff=lfs merge=lfs -text
 *.umap filter=lfs diff=lfs merge=lfs -text
