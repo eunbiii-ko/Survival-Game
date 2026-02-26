@@ -2,4 +2,10 @@
 
 
 #include "SG/GameModes/SGGameState.h"
+#include "SGExperienceManagerComponent.h"
 
+ASGGameState::ASGGameState(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	ExperienceManagerComp = CreateDefaultSubobject<USGExperienceManagerComponent>(TEXT("ExperienceManagerComponent"));
+}
