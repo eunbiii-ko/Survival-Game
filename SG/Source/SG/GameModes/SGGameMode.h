@@ -13,5 +13,7 @@ UCLASS()
 class SG_API ASGGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	ASGGameMode(const FObjectInitializer& ObjectInitializer);
 };
