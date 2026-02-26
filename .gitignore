@@ -74,3 +74,18 @@ SG/Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 SG/DerivedDataCache/*
+
+# Don't ignore icon and splash images for mobile app
+SG/!Build/IOS/Resources/
+SG/Build/IOS/Resources/*
+SG/!Build/IOS/Resources/Graphics/
+SG/Build/IOS/Resources/Graphics/*
+SG/!Build/IOS/Resources/Graphics/*.png
+SG/!Build/Android/res/
+SG/Build/Android/res/*
+SG/!Build/Android/res/*/
+SG/Build/Android/res/*/*
+SG/!Build/Android/res/*/*.png
+SG/# Ignore plugins binaries on deep subfolders
+SG/Plugins/**/Binaries/*
+SG/Plugins/**/Intermediate/*
