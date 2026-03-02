@@ -5,6 +5,7 @@
 
 #include "SGExperienceManagerComponent.h"
 #include "SGGameState.h"
+#include "SG/SGLogChannels.h"
 #include "SG/Character/SGCharacter.h"
 #include "SG/Player/SGPlayerController.h"
 #include "SG/Player/SGPlayerState.h"
@@ -40,8 +41,32 @@ void ASGGameMode::InitGameState()
 		FOnSGExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 }
 
+void ASGGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	// Experience 로드가 완료된 후, PlayerController의 Pawn 스폰이 진행되도록 한다.
+	if (IsExperienceLoaded())
+	{
+		Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	}
+}
+
+APawn* ASGGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
+{
+	UE_LOG(LogSG, Display, TEXT("[ASGGameMode::SpawnDefaultPawnAtTransform_Implementation]"));
+	return Super::SpawnDefaultPawnAtTransform_Implementation(NewPlayer, SpawnTransform);
+}
+
 void ASGGameMode::OnExperienceLoaded(const USGExperienceDefinition* CurrentExperience)
 {
+}
+
+bool ASGGameMode::IsExperienceLoaded() const
+{
+	check(GameState);
+	USGExperienceManagerComponent* ExperienceManagerComp = GameState->FindComponentByClass<USGExperienceManagerComponent>();
+	check(ExperienceManagerComp);
+
+	return ExperienceManagerComp->IsExperienceLoaded();
 }
 
 void ASGGameMode::HandleMatchAssignmentIfNotExpectingOne()
