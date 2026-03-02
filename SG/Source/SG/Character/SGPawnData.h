@@ -16,4 +16,8 @@ class SG_API USGPawnData : public UPrimaryDataAsset
 
 public:
 	USGPawnData(const FObjectInitializer& ObjectInitializer);
+
+	/** Pawn의 Class */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | PawnData")
+	TSubclassOf<APawn> PawnClass;
 };
