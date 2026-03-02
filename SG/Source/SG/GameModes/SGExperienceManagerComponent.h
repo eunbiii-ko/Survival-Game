@@ -41,6 +41,7 @@ public:
 	 */
 	void CallOrRegister_OnExperienceLoaded(FOnSGExperienceLoaded::FDelegate&& Delegate);
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override final;
 	
 private:
 	UFUNCTION()

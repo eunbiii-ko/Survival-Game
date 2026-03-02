@@ -3,9 +3,13 @@
 
 #include "SG/GameModes/SGExperienceManagerComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 
 USGExperienceManagerComponent::USGExperienceManagerComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
+	SetIsReplicatedByDefault(true);
 }
 
 
@@ -21,6 +25,13 @@ void USGExperienceManagerComponent::CallOrRegister_OnExperienceLoaded(FOnSGExper
 	{
 		OnExperienceLoaded.Add(MoveTemp(Delegate));
 	}
+}
+
+void USGExperienceManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, CurrentExperience);
 }
 
 void USGExperienceManagerComponent::OnRep_CurrentExperience()
