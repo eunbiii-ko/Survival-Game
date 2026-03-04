@@ -32,6 +32,7 @@ class SG_API USGExperienceManagerComponent : public UGameStateComponent
 
 public:
 	USGExperienceManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override final;
 
 	/** 현재 로딩이 완료가 되었고, CurrentExperience가 존재하면 true */
 	bool IsExperienceLoaded() { return (LoadedState == ESGExperienceLoadState::Loaded) && (CurrentExperience != nullptr); }
@@ -41,12 +42,15 @@ public:
 	 */
 	void CallOrRegister_OnExperienceLoaded(FOnSGExperienceLoaded::FDelegate&& Delegate);
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override final;
+
+	void ServerSetCurrentExperience(FPrimaryAssetId ExperienceID);
 	
 private:
 	UFUNCTION()
 	void OnRep_CurrentExperience();
-
+	void StartExperienceLoad();
+	void OnExperienceLoadComplete();
+	void OnExperienceFullLoadComplete();
 	
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentExperience)

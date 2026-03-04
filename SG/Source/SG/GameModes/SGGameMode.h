@@ -29,6 +29,7 @@ private:
 	 */
 	void OnExperienceLoaded(const USGExperienceDefinition* CurrentExperience);
 	bool IsExperienceLoaded() const;
+	void OnMatchAssignmentGiven(FPrimaryAssetId ExperienceID);
 	
 protected:
 	/**

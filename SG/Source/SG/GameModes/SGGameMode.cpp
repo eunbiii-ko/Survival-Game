@@ -71,4 +71,29 @@ bool ASGGameMode::IsExperienceLoaded() const
 
 void ASGGameMode::HandleMatchAssignmentIfNotExpectingOne()
 {
+	// 로딩할 Experience에 대해 PrimaryAssetID를 생성하여,
+	// OnMatchAssignmentGiven으로 넘겨준다.
+
+	FPrimaryAssetId ExperienceID;
+	UWorld* World = GetWorld();
+
+	// 일단 기본 옵션으로 B_LccDefaultExperience로 설정한다.
+	if (!ExperienceID.IsValid())
+	{
+		ExperienceID = FPrimaryAssetId(FPrimaryAssetType("LccExperienceDefinition"), FName("B_LccDefaultExperience"));
+	}
+
+	// 
+	OnMatchAssignmentGiven(ExperienceID);
+}
+
+void ASGGameMode::OnMatchAssignmentGiven(FPrimaryAssetId ExperienceID)
+{
+	// ExperienceManagerComp를 활용하여 Experience를 로딩하기 위해,
+	// ExperienceManagerComp의 ServerSetCurrentExperience를 호출한다.
+	check(ExperienceID.IsValid());
+
+	USGExperienceManagerComponent* ExperienceManagerComp = GameState->FindComponentByClass<USGExperienceManagerComponent>();
+	check(ExperienceManagerComp);
+	ExperienceManagerComp->ServerSetCurrentExperience(ExperienceID);
 }
