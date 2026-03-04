@@ -60,6 +60,13 @@ void USGExperienceManagerComponent::ServerSetCurrentExperience(FPrimaryAssetId E
 	StartExperienceLoad();
 }
 
+const USGExperienceDefinition* USGExperienceManagerComponent::GetCurrentExperienceChecked() const
+{
+	check(LoadedState == ESGExperienceLoadState::Loaded);
+	check(CurrentExperience != nullptr);
+	return CurrentExperience;
+}
+
 
 void USGExperienceManagerComponent::StartExperienceLoad()
 {

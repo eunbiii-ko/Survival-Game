@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "SGGameMode.generated.h"
 
+class USGPawnData;
 class USGExperienceDefinition;
 /**
  * 
@@ -20,9 +21,12 @@ public:
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override final;
 	virtual void InitGameState() override final;
+	UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override final;
 	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override final;
 	APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override final;
+	const USGPawnData* GetPawnDataForController(const AController* InController) const;
 
+	
 private:
 	/**
 	 * member methods 

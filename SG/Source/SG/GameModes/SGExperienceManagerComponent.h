@@ -44,6 +44,7 @@ public:
 
 
 	void ServerSetCurrentExperience(FPrimaryAssetId ExperienceID);
+	const USGExperienceDefinition* GetCurrentExperienceChecked() const;
 	
 private:
 	UFUNCTION()

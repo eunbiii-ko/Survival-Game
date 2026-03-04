@@ -26,7 +26,9 @@ public:
 	 * member methods
 	 */
 	void OnExperienceLoaded(const USGExperienceDefinition* CurrentExperience);
-
+	template <class T>
+	const T* GetPawnData() const { return Cast<T>(PawnData); }
+	void SetPawnData(const USGPawnData* InPawnData);
 
 private:
 	/**

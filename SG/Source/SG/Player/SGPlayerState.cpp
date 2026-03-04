@@ -3,6 +3,7 @@
 
 #include "SG/Player/SGPlayerState.h"
 #include "SG/GameModes/SGExperienceManagerComponent.h"
+#include "SG/GameModes/SGGameMode.h"
 
 
 void ASGPlayerState::PostInitializeComponents()
@@ -21,4 +22,21 @@ void ASGPlayerState::PostInitializeComponents()
 
 void ASGPlayerState::OnExperienceLoaded(const USGExperienceDefinition* CurrentExperience)
 {
+	if (ASGGameMode* GameMode = GetWorld()->GetAuthGameMode<ASGGameMode>())
+	{
+		const USGPawnData* NewPawnData = GameMode->GetPawnDataForController(GetOwningController());
+		check(NewPawnData);
+
+		SetPawnData(NewPawnData);
+	}
+}
+
+void ASGPlayerState::SetPawnData(const USGPawnData* InPawnData)
+{
+	check(InPawnData);
+
+	// PawnData가 2번 중복으로 설정되는 것을 막기 위함
+	check(!PawnData);
+
+	PawnData = InPawnData;
 }
