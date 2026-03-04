@@ -10,11 +10,15 @@ public class SG : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
+			"Core", "CoreUObject", "Engine",
 			// GAS
 			"GameplayTags",
 			// Game Features
-			"ModularGameplay"
+			"ModularGameplay",
+			"GameFeatures",
+			// Input
+			"InputCore",
+			"EnhancedInput",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
