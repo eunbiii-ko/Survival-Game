@@ -111,6 +111,18 @@ const USGPawnData* ASGGameMode::GetPawnDataForController(const AController* InCo
 
 void ASGGameMode::OnExperienceLoaded(const USGExperienceDefinition* CurrentExperience)
 {
+	// Experience 로딩이 완료되기 전에 접속한 플레이어들의 Pawn을 스폰한다.
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PC = Cast<APlayerController>(Iterator->Get());
+		if (PC && PC->GetPawn() == nullptr)
+		{
+			if (PlayerCanRestart(PC))
+			{
+				RestartPlayer(PC);
+			}
+		}
+	}
 }
 
 bool ASGGameMode::IsExperienceLoaded() const

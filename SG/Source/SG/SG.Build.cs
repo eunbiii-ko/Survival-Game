@@ -19,6 +19,8 @@ public class SG : ModuleRules
 			// Input
 			"InputCore",
 			"EnhancedInput",
+			// Networking
+			"NetCore",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -23,6 +23,7 @@ void USGExperienceManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeP
 
 void USGExperienceManagerComponent::OnRep_CurrentExperience()
 {
+	StartExperienceLoad();
 }
 
 void USGExperienceManagerComponent::CallOrRegister_OnExperienceLoaded(FOnSGExperienceLoaded::FDelegate&& Delegate)

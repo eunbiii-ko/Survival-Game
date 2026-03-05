@@ -21,7 +21,8 @@ public:
 	 * Actor's Interface
 	 */
 	virtual void PostInitializeComponents() override final;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	/**
 	 * member methods
 	 */
@@ -34,6 +35,11 @@ private:
 	/**
 	 * member variable
 	 */
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
 	TObjectPtr<const USGPawnData> PawnData;
+
+
+protected:
+	UFUNCTION()
+	void OnRep_PawnData();
 };
