@@ -2,11 +2,15 @@
 
 
 #include "SG/Character/SGCharacter.h"
+#include "SG/Character/SGPawnExtensionComponent.h"
 
-ASGCharacter::ASGCharacter()
+ASGCharacter::ASGCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
+	PawnExtComp = CreateDefaultSubobject<USGPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 }
 
 void ASGCharacter::BeginPlay()

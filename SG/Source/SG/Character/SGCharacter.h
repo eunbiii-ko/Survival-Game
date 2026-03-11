@@ -6,16 +6,22 @@
 #include "GameFramework/Character.h"
 #include "SGCharacter.generated.h"
 
+class USGPawnExtensionComponent;
+
 UCLASS()
 class SG_API ASGCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ASGCharacter();
+	ASGCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SG | Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USGPawnExtensionComponent> PawnExtComp;
 };
