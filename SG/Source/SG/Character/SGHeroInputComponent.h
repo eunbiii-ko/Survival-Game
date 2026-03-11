@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/PawnComponent.h"
+#include "Components/GameFrameworkInitStateInterface.h"
 #include "SGHeroInputComponent.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable, Meta=(BlueprintSpawnableComponent))
-class SG_API USGHeroInputComponent : public UPawnComponent
+class SG_API USGHeroInputComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
 {
 	GENERATED_BODY()
 
