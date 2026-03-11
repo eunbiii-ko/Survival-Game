@@ -3,18 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/PawnComponent.h"
-#include "Components/GameFrameworkInitStateInterface.h"
+#include "SG/Character/SGHeroComponent.h"
 #include "SGHeroInputComponent.generated.h"
 
 /**
  * 
  */
-UCLASS(Blueprintable, Meta=(BlueprintSpawnableComponent))
-class SG_API USGHeroInputComponent : public UPawnComponent, public IGameFrameworkInitStateInterface
+UCLASS(Blueprintable, Meta = (BlueprintSpawnableComponent))
+class SG_API USGHeroInputComponent : public USGHeroComponent
 {
 	GENERATED_BODY()
 
 public:
 	USGHeroInputComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	/** FeatureName 정의 */
+	static const FName NAME_ActorFeatureName;
+	
+
+	/**
+	 * IGameFrameworkInitStateInterface
+	 */
+	virtual FName GetFeatureName() const override final { return NAME_ActorFeatureName; }
+	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
+	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
+	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) override;
 };
