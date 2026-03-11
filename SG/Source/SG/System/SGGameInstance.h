@@ -16,4 +16,7 @@ class SG_API USGGameInstance : public UGameInstance
 
 public:
 	USGGameInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+protected:
+	virtual void Init() override final;
 };
