@@ -9,6 +9,7 @@
 #include "SG/SGLogChannels.h"
 #include "SG/Character/SGCharacter.h"
 #include "SG/Character/SGPawnData.h"
+#include "SG/Character/SGPawnExtensionComponent.h"
 #include "SG/Player/SGPlayerController.h"
 #include "SG/Player/SGPlayerState.h"
 
@@ -68,8 +69,28 @@ void ASGGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewP
 
 APawn* ASGGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
 {
-	UE_LOG(LogSG, Display, TEXT("[ASGGameMode::SpawnDefaultPawnAtTransform_Implementation]"));
-	return Super::SpawnDefaultPawnAtTransform_Implementation(NewPlayer, SpawnTransform);
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Instigator = GetInstigator();
+	SpawnInfo.ObjectFlags |= RF_Transient;
+	SpawnInfo.bDeferConstruction = true;
+
+	if (UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer))
+	{
+		if (APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnClass, SpawnTransform, SpawnInfo))
+		{
+			if (USGPawnExtensionComponent* PawnExtComp = USGPawnExtensionComponent::FindPawnExtensionComponent(SpawnedPawn))
+			{
+				if (const USGPawnData* PawnData = GetPawnDataForController(NewPlayer))
+				{
+					PawnExtComp->SetPawnData(PawnData);
+				}
+			}
+			SpawnedPawn->FinishSpawning(SpawnTransform);
+			return SpawnedPawn;
+		}
+	}
+	
+	return nullptr;
 }
 
 const USGPawnData* ASGGameMode::GetPawnDataForController(const AController* InController) const

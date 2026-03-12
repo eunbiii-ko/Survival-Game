@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Components/PawnComponent.h"
 #include "Components/GameFrameworkInitStateInterface.h"
+#include "SG/Character/SGPawnData.h"
 #include "SGPawnExtensionComponent.generated.h"
 
+class USGPawnData;
 /**
  * 컴포넌트들의 초기화를 담당한다.
  */
@@ -27,13 +29,38 @@ public:
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override final;
 	virtual void CheckDefaultInitialization() override final;
 	//~ End IGameFrameworkInitStateInterface interface
+
+	/**
+	 * member methods
+	 */
+	static USGPawnExtensionComponent* FindPawnExtensionComponent(const AActor* Actor)
+	{
+		return (Actor ? Actor->FindComponentByClass<USGPawnExtensionComponent>() : nullptr);
+	}
+	template <class T>
+	const T* GetPawnData() const { return Cast<T>(PawnData); }
+	void SetPawnData(const USGPawnData* InPawnData);
+
+	void SetupPlayerInputComponent();
+	
+	/** Pawn의 Controller가 변경될 때, Pawn을 소유한 쪽에서 호출된다. */
+    void HandleControllerChanged();
+	/** PlayerState가 복제됐을 때, Pawn을 소유한 쪽에서 호출된다. */
+	void HandlePlayerStateReplicated();
 	
 protected:
 	virtual void OnRegister() override final;
 	virtual void BeginPlay() override final;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override final;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+	UFUNCTION()
+	void OnRep_PawnData();
+	
+	/** Pawn data used to create the pawn. Specified from a spawn function or on a placed instance. */
+	UPROPERTY(EditInstanceOnly, ReplicatedUsing = OnRep_PawnData, Category = "SG | Pawn")
+	TObjectPtr<const USGPawnData> PawnData;
+
 };
 
 

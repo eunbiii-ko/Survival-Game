@@ -19,6 +19,20 @@ void ASGCharacter::BeginPlay()
 	
 }
 
+void ASGCharacter::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+	// 클라이언트에서 호출된다.
+	PawnExtComp->HandleControllerChanged();
+}
+
+void ASGCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	// 클라이언트에서 호출된다.
+	PawnExtComp->HandlePlayerStateReplicated();
+}
+
 void ASGCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -29,5 +43,14 @@ void ASGCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	// Pawn이 Possess로서, Controller와 PlayerState 정보 접근이 가능한 상태가 되었다.
+	PawnExtComp->SetupPlayerInputComponent();
+}
+
+void ASGCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	// 서버에서 호출된다.
+	PawnExtComp->HandleControllerChanged();
 }
 

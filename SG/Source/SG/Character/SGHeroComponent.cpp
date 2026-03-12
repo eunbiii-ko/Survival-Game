@@ -3,8 +3,11 @@
 
 #include "SG/Character/SGHeroComponent.h"
 #include "SGPawnExtensionComponent.h"
+#include "Components/GameFrameworkComponentManager.h"
 #include "SG/SGGameplayTags.h"
 #include "SG/SGLogChannels.h"
+#include "SG/Player/SGPlayerController.h"
+#include "SG/Player/SGPlayerState.h"
 
 const FName USGHeroComponent::NAME_ActorFeatureName("Hero");
 
@@ -62,19 +65,119 @@ void USGHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void USGHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
 {
-	IGameFrameworkInitStateInterface::OnActorInitStateChanged(Params);
+	if (Params.FeatureName == USGPawnExtensionComponent::NAME_ActorFeatureName)
+	{
+		// PawnExtComp의 DataInitialized 상태 변화 관찰 후,
+		// HeroComp도 DataInitialized 상태로 변경한다. (자신의 업데이트 호출)
+		// - CanChangeInitState() 확인 
+		if (Params.FeatureState == SGGameplayTags::InitState_DataInitialized)
+		{
+			CheckDefaultInitialization();
+		}
+	}
 }
 
 bool USGHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	FGameplayTag DesiredState) const
 {
-	return IGameFrameworkInitStateInterface::CanChangeInitState(Manager, CurrentState, DesiredState);
+	check(Manager);
+
+	APawn* Pawn = GetPawn<APawn>();
+	ASGPlayerState* SGPs = GetPlayerState<ASGPlayerState>();
+
+	// Spawned 초기화
+	if (!CurrentState.IsValid() && DesiredState == SGGameplayTags::InitState_Spawned)
+	{
+		if (Pawn)
+		{
+			return true;
+		}
+	}
+
+	// Spawned -> DataAvailable
+	if (CurrentState == SGGameplayTags::InitState_Spawned && DesiredState == SGGameplayTags::InitState_DataAvailable)
+	{
+		if (!SGPs)
+		{
+			return false;
+		}
+		
+		// If we're authority or autonomous, we need to wait for a controller with registered ownership of the player state.
+		if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
+		{
+			AController* Controller = GetController<AController>();
+		
+			const bool bHasControllerPairedWithPS = (Controller != nullptr) && \
+				(Controller->PlayerState != nullptr) && \
+				(Controller->PlayerState->GetOwner() == Controller);
+		
+			if (!bHasControllerPairedWithPS)
+			{
+				return false;
+			}
+		}
+		
+		const bool bIsLocallyControlled = Pawn->IsLocallyControlled();
+		const bool bIsBot = Pawn->IsBotControlled();
+		
+		if (bIsLocallyControlled && !bIsBot)
+		{
+			ASGPlayerController* LyraPC = GetController<ASGPlayerController>();
+		
+			// The input component and local player is required when locally controlled.
+			if (!Pawn->InputComponent || !LyraPC || !LyraPC->GetLocalPlayer())
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	// DataAvailable -> DataInitialized
+	if (CurrentState == SGGameplayTags::InitState_DataAvailable && DesiredState == SGGameplayTags::InitState_DataInitialized)
+	{
+		// PawnExtComp가 DataInitialized 상태에 도달했는지 확인한다.
+		// == 모든 FeatureComp들이 DataAvailable인 상태가 됐는지 확인한다.
+		return SGPs && Manager->HasFeatureReachedInitState(Pawn,
+			USGPawnExtensionComponent::NAME_ActorFeatureName,
+			SGGameplayTags::InitState_DataInitialized);
+	}
+
+	// DataInitialized -> GameplayReady
+	if (CurrentState == SGGameplayTags::InitState_DataInitialized && DesiredState == SGGameplayTags::InitState_GameplayReady)
+	{
+		UE_LOG(LogSG, Display, TEXT("USGHeroComponent::CanChangeInitState() DataInitialized -> GameplayReady %s in %d, name: %s"),
+			*GetName(), Pawn->HasAuthority(), *Pawn->GetName());
+		return true;
+	}
+	
+	return false;
 }
 
 void USGHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	FGameplayTag DesiredState)
 {
-	IGameFrameworkInitStateInterface::HandleChangeInitState(Manager, CurrentState, DesiredState);
+	// DataAvailable -> DataInitialized
+	if (CurrentState == SGGameplayTags::InitState_DataAvailable && DesiredState == SGGameplayTags::InitState_DataInitialized)
+	{
+		APawn* Pawn = GetPawn<APawn>();
+		ASGPlayerState* LccPs = GetPlayerState<ASGPlayerState>();
+		if (!ensure(Pawn && LccPs))
+		{
+			return;
+		}
+
+		// todo
+		//  - Input과 Camera에 대한 핸들링
+		
+		const bool bIIsLocallyControlled = Pawn->IsLocallyControlled();
+		const USGPawnData* PawnData = nullptr;
+		if (USGPawnExtensionComponent* PawnExtComp = USGPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+		{
+			PawnData = PawnExtComp->GetPawnData<USGPawnData>();
+		}
+	}
 }
 
 void USGHeroComponent::CheckDefaultInitialization()

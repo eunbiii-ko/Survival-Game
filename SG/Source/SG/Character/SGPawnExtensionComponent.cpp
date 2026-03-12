@@ -3,7 +3,9 @@
 
 #include "SG/Character/SGPawnExtensionComponent.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "Net/UnrealNetwork.h"
 #include "SG/SGGameplayTags.h"
+#include "SG/SGLogChannels.h"
 
 const FName USGPawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");
 
@@ -14,28 +16,134 @@ USGPawnExtensionComponent::USGPawnExtensionComponent(const FObjectInitializer& O
 	PrimaryComponentTick.bCanEverTick = false;
 
 	SetIsReplicatedByDefault(true);
+
+	PawnData = nullptr;
 }
 
 bool USGPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	FGameplayTag DesiredState) const
 {
-	return IGameFrameworkInitStateInterface::CanChangeInitState(Manager, CurrentState, DesiredState);
+	check(Manager);
+
+	APawn* Pawn = GetPawn<APawn>();
+
+	// InitState_Spawned 초기화
+	if (!CurrentState.IsValid() && DesiredState == SGGameplayTags::InitState_Spawned)
+	{
+		// Pawn이 잘 세팅만 되어 있으면 바로 InitState_Spawned로 넘어간다. 
+		if (Pawn)
+		{
+			return true;
+		}
+	}
+
+	// Spawned -> DataAvailable
+	if (CurrentState == SGGameplayTags::InitState_Spawned && DesiredState == SGGameplayTags::InitState_DataAvailable)
+	{
+		// 아마 PawnData를 누군가 설정하는 모양이다.
+		if (!PawnData)
+		{
+			return false;
+		}
+
+		// LocallyControlled인 Pawn이 Controller가 없으면 에러!
+		const bool bIsLocallyControlled = Pawn->IsLocallyControlled();
+		const bool bHasAuthority = Pawn->HasAuthority();
+		if (bIsLocallyControlled || bHasAuthority)
+		{
+			if (!GetController<AController>())
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	// DataAvailable -> DataInitialized
+	if (CurrentState == SGGameplayTags::InitState_DataAvailable && DesiredState == SGGameplayTags::InitState_DataInitialized)
+	{
+		// Actor에 바인드된 모든 Feature들이 DataAvailable 상태일 때, DataInitialized로 넘어갈 수 있다.
+		return Manager->HaveAllFeaturesReachedInitState(Pawn, SGGameplayTags::InitState_DataAvailable);
+	}
+
+	// DataInitialized -> GameplayReady
+	if (CurrentState == SGGameplayTags::InitState_DataInitialized && DesiredState == SGGameplayTags::InitState_GameplayReady)
+	{
+		UE_LOG(LogSG, Display, TEXT("USGPawnExtensionComponent::CanChangeInitState() DataInitialized -> GameplayReady %s in %d name: %s"),
+			*GetName(), Pawn->HasAuthority(), *Pawn->GetName());
+		return true;
+	}
+
+	// 위의 선형적인 transition이 아니면 false
+	return false;
 }
 
 void USGPawnExtensionComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
 {
-	IGameFrameworkInitStateInterface::OnActorInitStateChanged(Params);
+	if (Params.FeatureName != NAME_ActorFeatureName)
+	{
+		// PawnExtComp는 다른 Feature Comp들의 상태가 DataAvailable를 관찰하여,
+		// CanChangeInitState()에서 Sync를 맞춘다.
+		// - 이를 가능하게 하기 위해, OnActorInitStateChanged()에서 DataAvailable에 대해
+		//   지속적으로 CheckDefaultInitialization()를 호출하여 상태를 확인한다. 
+		if (Params.FeatureState == SGGameplayTags::InitState_DataAvailable)
+		{
+			CheckDefaultInitialization();
+		}
+	}
+}
+
+void USGPawnExtensionComponent::SetPawnData(const USGPawnData* InPawnData)
+{
+	check(InPawnData);
+
+	APawn* Pawn = GetPawnChecked<APawn>();
+
+	if (Pawn->GetLocalRole() != ROLE_Authority)
+	{
+		return;
+	}
+
+	if (PawnData)
+	{
+		return;
+	}
+
+	PawnData = InPawnData;
+
+	Pawn->ForceNetUpdate();
+
+	CheckDefaultInitialization();
+}
+
+void USGPawnExtensionComponent::SetupPlayerInputComponent()
+{
+	// ForceUpdate로 다시 InitState 상태 변환 시작
+	CheckDefaultInitialization();
+}
+
+void USGPawnExtensionComponent::HandleControllerChanged()
+{
+	CheckDefaultInitialization();
+}
+
+void USGPawnExtensionComponent::HandlePlayerStateReplicated()
+{
+	CheckDefaultInitialization();
 }
 
 void USGPawnExtensionComponent::OnRegister()
 {
 	Super::OnRegister();
 
-	// 올바른 Pawn에 등록되었는지 확인한다. 
+	// 올바른 Pawn에 등록되었는지 확인한다.
 	const APawn* Pawn = GetPawn<APawn>();
 	ensureAlwaysMsgf((Pawn != nullptr),
 		TEXT("LyraPawnExtensionComponent on [%s] can only be added to Pawn actors."),
 		*GetNameSafe(GetOwner()));
+
+	UE_LOG(LogSG, Display, TEXT("%s OnRegister in %d"), *NAME_ActorFeatureName.ToString(), Pawn ? Pawn->HasAuthority() : -1);
 
 	// GameFrameworkComponentManager에 InitState 사용을 위해 등록을 진행한다.
 	RegisterInitStateFeature();
@@ -67,6 +175,18 @@ void USGPawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason
 	// OnRegister()의 RegisterInitStateFeature()의 쌍을 맞추어준다.
 	UnregisterInitStateFeature();
 	Super::EndPlay(EndPlayReason);
+}
+
+void USGPawnExtensionComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USGPawnExtensionComponent, PawnData);
+}
+
+void USGPawnExtensionComponent::OnRep_PawnData()
+{
+	CheckDefaultInitialization();
 }
 
 void USGPawnExtensionComponent::CheckDefaultInitialization()
