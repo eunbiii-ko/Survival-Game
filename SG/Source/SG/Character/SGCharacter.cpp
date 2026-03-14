@@ -2,6 +2,8 @@
 
 
 #include "SG/Character/SGCharacter.h"
+
+#include "SG/Camera/SGCameraComponent.h"
 #include "SG/Character/SGPawnExtensionComponent.h"
 
 ASGCharacter::ASGCharacter(const FObjectInitializer& ObjectInitializer)
@@ -11,6 +13,9 @@ ASGCharacter::ASGCharacter(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	PawnExtComp = CreateDefaultSubobject<USGPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+
+	CameraComp = CreateDefaultSubobject<USGCameraComponent>(TEXT("CameraComponent"));
+	CameraComp->SetRelativeLocation(FVector(-300.0f, 0.0f, 75.0f));
 }
 
 void ASGCharacter::BeginPlay()

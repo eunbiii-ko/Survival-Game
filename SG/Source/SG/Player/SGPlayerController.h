@@ -13,5 +13,7 @@ UCLASS()
 class SG_API ASGPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+public:
+	ASGPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 };

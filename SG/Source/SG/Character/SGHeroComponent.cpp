@@ -102,11 +102,11 @@ bool USGHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 			return false;
 		}
 		
-		// If we're authority or autonomous, we need to wait for a controller with registered ownership of the player state.
+		// 서버 또는 본인 캐릭터라면 PlayerState가 제대로 설정되어 있는지 확인한다.
 		if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
 		{
 			AController* Controller = GetController<AController>();
-		
+
 			const bool bHasControllerPairedWithPS = (Controller != nullptr) && \
 				(Controller->PlayerState != nullptr) && \
 				(Controller->PlayerState->GetOwner() == Controller);
@@ -122,10 +122,10 @@ bool USGHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manage
 		
 		if (bIsLocallyControlled && !bIsBot)
 		{
-			ASGPlayerController* LyraPC = GetController<ASGPlayerController>();
+			ASGPlayerController* SGPC = GetController<ASGPlayerController>();
 		
 			// The input component and local player is required when locally controlled.
-			if (!Pawn->InputComponent || !LyraPC || !LyraPC->GetLocalPlayer())
+			if (!Pawn->InputComponent || !SGPC || !SGPC->GetLocalPlayer())
 			{
 				return false;
 			}

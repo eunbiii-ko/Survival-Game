@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SGCharacter.generated.h"
 
+class USGCameraComponent;
 class USGPawnExtensionComponent;
 
 UCLASS()
@@ -28,4 +29,7 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SG | Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USGPawnExtensionComponent> PawnExtComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Lyra | Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USGCameraComponent> CameraComp;
 };
