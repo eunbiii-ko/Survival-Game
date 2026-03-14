@@ -6,7 +6,7 @@
 #include "SGCameraMode.h"
 
 USGCameraComponent::USGCameraComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer), CameraModeStack(nullptr)
 {
 }
 
@@ -25,8 +25,26 @@ void USGCameraComponent::OnRegister()
 void USGCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& DesiredView)
 {
 	Super::GetCameraView(DeltaTime, DesiredView);
+
+	UpdateCameraModes();
 }
 
-void USGCameraComponent::UpdateCameraMode()
+void USGCameraComponent::UpdateCameraModes()
 {
+	check(CameraModeStack);
+
+	
+	//if (CameraModeStack->IsStackActivate())
+	{
+		// DetermineCameraModeDelegate에 함수가 바인딩되어 있다면
+		if (DetermineCameraModeDelegate.IsBound())
+		{
+			// DetermineCameraModeDelegate: CameraMode Class를 반환하는 델리게이트
+			if (const TSubclassOf<USGCameraMode> CameraMode = DetermineCameraModeDelegate.Execute())
+			{
+				// 현재 플레이어가 사용하고 있는 CameraMode를 CameraModeStack에 저장한다. 
+				//CameraModeStack->PushCameraMode(CameraMode);
+			}
+		}
+	}
 }

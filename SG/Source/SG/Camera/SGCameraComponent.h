@@ -26,8 +26,13 @@ class SG_API USGCameraComponent : public UCameraComponent
 public:
 	USGCameraComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	
+	/**
+	 * member methods
+	 */
+	static USGCameraComponent* FindCameraComponent(const AActor* Actor)
+	{ return (Actor ? Actor->FindComponentByClass<USGCameraComponent>() : nullptr); }
 
+	
 	/** 현재 CameraMode를 가져온다. */
 	FSGCameraModeDelegate DetermineCameraModeDelegate;
 
@@ -43,7 +48,7 @@ protected:
 	/**
 	 * member methods
 	 */
-	void UpdateCameraMode();
+	void UpdateCameraModes();
 	
 	
 	/**

@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "SGPawnData.generated.h"
 
+class USGCameraMode;
 /**
  * 
  */
@@ -20,4 +21,8 @@ public:
 	/** Pawn의 Class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | PawnData")
 	TSubclassOf<APawn> PawnClass;
+
+	/** Pawn이 사용하는 Camera Mode */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | PawnData")
+	TSubclassOf<USGCameraMode> CameraModeClass;
 };

@@ -6,6 +6,7 @@
 #include "SG/Character/SGHeroComponent.h"
 #include "SGHeroCameraComponent.generated.h"
 
+class USGCameraMode;
 /**
  * 
  */
@@ -28,4 +29,10 @@ public:
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) override;
+
+protected:
+	/**
+	 * member methods 
+	 */
+	TSubclassOf<USGCameraMode> DetermineCameraMode() const;
 };
