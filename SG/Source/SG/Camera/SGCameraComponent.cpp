@@ -26,7 +26,11 @@ void USGCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desire
 {
 	Super::GetCameraView(DeltaTime, DesiredView);
 
+	// 현재 CameraModeClass를 가져와서, CameraMode들을 블렌딩한다.
 	UpdateCameraModes();
+
+	FSGCameraModeView CameraModeView;
+	CameraModeStack->EvaluateStack(DeltaTime, CameraModeView);
 }
 
 void USGCameraComponent::UpdateCameraModes()

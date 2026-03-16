@@ -3,11 +3,27 @@
 
 #include "SG/Camera/SGCameraMode.h"
 
+#include "SGPlayerCameraManager.h"
+
+//////////////////////////////////////////////////////////////////////////
+// FSGCameraModeView
+//////////////////////////////////////////////////////////////////////////
+FSGCameraModeView::FSGCameraModeView()
+	: Location(ForceInit), Rotation(ForceInit), ControlRotation(ForceInit), FieldOfView(SG_CAMERA_DEFAULT_FOV)
+{
+}
+
+
+
 //////////////////////////////////////////////////////////////////////////
 // USGCameraMode
 //////////////////////////////////////////////////////////////////////////
 USGCameraMode::USGCameraMode(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
+	BlendTime = 0.f;
+	BlendAlpha = 1.f;
+	BlendWeight = 1.f;
 }
 
 
@@ -15,6 +31,7 @@ USGCameraMode::USGCameraMode(const FObjectInitializer& ObjectInitializer)
 // USGCameraModeStack
 //////////////////////////////////////////////////////////////////////////
 USGCameraModeStack::USGCameraModeStack(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 }
 
@@ -37,8 +54,8 @@ void USGCameraModeStack::PushCameraMode(const TSubclassOf<USGCameraMode>& Camera
 
 	// CameraModeStack을 순회하며 CameraMode의 Weight를 계산한다:
 	// ExistingStackIndex: CameraModeStack에서 CameraMode에 맞는 Index를 찾는다.
-	// ExistingStackContribution: 위에서 아래로 최종 BlendWeight 값을 찾기 위해 초기값으로 1.f 설정한다.
 	int32 ExistingStackIndex = INDEX_NONE;
+	// ExistingStackContribution:  CameraMode가 현재 최종 화면에서 차지하는 비율
 	float ExistingStackContribution = 1.f;
 
 	for (int32 StackIndex = 0; StackIndex < StackSize; StackIndex++)
@@ -106,5 +123,46 @@ USGCameraMode* USGCameraModeStack::GetCameraModeInstance(const TSubclassOf<USGCa
 	CameraModeInstances.Add(NewCameraMode);
 
 	return NewCameraMode;
+}
+
+void USGCameraModeStack::EvaluateStack(float DeltaTime, FSGCameraModeView& OutCameraModeView)
+{
+	// CameraModeStack에 있는 CameraMode를 업데이트한다:
+	//  - CameraMode->BlendWeight >= 1: 삭제 
+	UpdateStack(DeltaTime);
+}
+
+void USGCameraModeStack::UpdateStack(float DeltaTime)
+{
+	const int32 StackSize = CameraModeStack.Num();
+	if (StackSize <= 0)
+	{
+		return;
+	}
+
+	// CameraModeStack을 순회하며, CameraMode를 업데이트한다.
+	int32 RemoveCount = 0;
+	int32 RemoveIndex = INDEX_NONE;
+	// StackIndex == 0: 가장 최신 데이터
+	for (int32 StackIndex = 0; StackIndex < StackSize; ++StackIndex)
+	{
+		USGCameraMode* CameraMode = CameraModeStack[StackIndex];
+		check(CameraMode);
+
+
+		// 만약 하나라도 CameraMode가 BlendWeight가 1.0에 도달했다면,
+		// 그 이후 CameraMode를 제거한다.
+		if (CameraMode->BlendWeight >= 1.f)
+		{
+			RemoveIndex = (StackIndex + 1);
+			RemoveCount = (StackSize - RemoveIndex);
+			break;
+		}
+	}
+
+	if (RemoveCount > 0)
+	{
+		CameraModeStack.RemoveAt(RemoveIndex, RemoveCount);
+	}
 }
 

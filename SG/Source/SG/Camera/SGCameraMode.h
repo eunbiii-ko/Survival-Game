@@ -7,6 +7,22 @@
 #include "SGCameraMode.generated.h"
 
 /**
+ * FSGCameraModeView
+ *
+ *	현재 카메라가 바라보는 시야를 정의한다.
+ */
+struct FSGCameraModeView
+{
+	FSGCameraModeView();
+
+	FVector Location;
+	FRotator Rotation;
+	FRotator ControlRotation;
+	float FieldOfView;
+};
+
+
+/**
  * SGCameraMode
  *  - Camera Blending 대상 유닛
  */
@@ -18,6 +34,8 @@ class SG_API USGCameraMode : public UObject
 public:
 	USGCameraMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	
+public:
 	/** 얼마동안 Blend를 진행할지 시간을 의미 */
 	UPROPERTY(EditDefaultsOnly, Category = "Blending")
 	float BlendTime;
@@ -30,6 +48,9 @@ public:
 	 * 앞서 BlendAlpha의 선형 값을 매핑하여 최종 BlendWeight를 계산한다.
 	 */
 	float BlendWeight;
+
+	/** CameraMode에 의해 생성된 CameraModeView */
+	FSGCameraModeView View;
 };
 
 
@@ -49,14 +70,14 @@ public:
 	 * member methods
 	 */
 	void PushCameraMode(const TSubclassOf<USGCameraMode>& CameraModeClass);
-
+	void EvaluateStack(float DeltaTime, FSGCameraModeView& OutCameraModeView);
 	
 protected:
 	/**
 	 * member methods
 	 */
 	USGCameraMode* GetCameraModeInstance(const TSubclassOf<USGCameraMode>& CameraModeClass);
-
+	void UpdateStack(float DeltaTime);
 	
 	/**
 	 * member variables
