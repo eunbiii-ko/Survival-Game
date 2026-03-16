@@ -17,6 +17,19 @@ class SG_API USGCameraMode : public UObject
 
 public:
 	USGCameraMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	/** 얼마동안 Blend를 진행할지 시간을 의미 */
+	UPROPERTY(EditDefaultsOnly, Category = "Blending")
+	float BlendTime;
+
+	/** 선형적인 Blend 값 [0, 1] */
+	float BlendAlpha;
+
+	/**
+	 * 해당 CameraMode의 최종 Blend값 (시간에 따른 비율)
+	 * 앞서 BlendAlpha의 선형 값을 매핑하여 최종 BlendWeight를 계산한다.
+	 */
+	float BlendWeight;
 };
 
 
@@ -32,6 +45,19 @@ class USGCameraModeStack : public UObject
 public:
 	USGCameraModeStack(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	/**
+	 * member methods
+	 */
+	void PushCameraMode(const TSubclassOf<USGCameraMode>& CameraModeClass);
+
+	
+protected:
+	/**
+	 * member methods
+	 */
+	USGCameraMode* GetCameraModeInstance(const TSubclassOf<USGCameraMode>& CameraModeClass);
+
+	
 	/**
 	 * member variables
 	 */

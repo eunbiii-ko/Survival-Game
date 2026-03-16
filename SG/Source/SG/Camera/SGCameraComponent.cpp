@@ -43,7 +43,7 @@ void USGCameraComponent::UpdateCameraModes()
 			if (const TSubclassOf<USGCameraMode> CameraMode = DetermineCameraModeDelegate.Execute())
 			{
 				// 현재 플레이어가 사용하고 있는 CameraMode를 CameraModeStack에 저장한다. 
-				//CameraModeStack->PushCameraMode(CameraMode);
+				CameraModeStack->PushCameraMode(CameraMode);
 			}
 		}
 	}
