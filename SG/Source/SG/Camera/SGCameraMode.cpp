@@ -268,6 +268,8 @@ void USGCameraModeStack::EvaluateStack(float DeltaTime, FSGCameraModeView& OutCa
 	// CameraModeStack에 있는 CameraMode를 업데이트한다:
 	//  - CameraMode->BlendWeight >= 1: 삭제 
 	UpdateStack(DeltaTime);
+	
+	BlendStack(OutCameraModeView);
 }
 
 void USGCameraModeStack::UpdateStack(float DeltaTime)

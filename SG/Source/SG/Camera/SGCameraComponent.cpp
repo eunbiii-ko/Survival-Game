@@ -26,11 +26,46 @@ void USGCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desire
 {
 	Super::GetCameraView(DeltaTime, DesiredView);
 
-	// 현재 CameraModeClass를 가져와서, CameraMode들을 블렌딩한다.
+	// 현재 CameraModeClass를 가져와서, CameraMode들을 블렌딩한다:
 	UpdateCameraModes();
 
 	FSGCameraModeView CameraModeView;
 	CameraModeStack->EvaluateStack(DeltaTime, CameraModeView);
+
+	// PC의 ConrolRotation을 EvaluateStack()에서 계산된 CameraModeView.ControlRotation로 업데이트한다:
+	if (APawn* TargetPawn = Cast<APawn>(GetTargetActor()))
+	{
+		if (APlayerController* PC = TargetPawn->GetController<APlayerController>())
+		{
+			PC->SetControlRotation(CameraModeView.ControlRotation);
+		}
+	}
+
+	// Camera의 Location과 Rotation에 최신 값(CameraModeView)을 적용한다.
+	SetWorldLocationAndRotation(CameraModeView.Location, CameraModeView.Rotation);
+
+	// FOV 업데이트
+	FieldOfView = CameraModeView.FieldOfView;
+
+	// DesiredView 업데이트한다:
+	// - CameraComp의 변화 사항을 반영해서 최종 렌더링까지 반영하게 된다.
+	DesiredView.Location = CameraModeView.Location;
+	DesiredView.Rotation = CameraModeView.Rotation;
+	DesiredView.FOV = CameraModeView.FieldOfView;
+	DesiredView.OrthoWidth = OrthoWidth;
+	DesiredView.OrthoNearClipPlane = OrthoNearClipPlane;
+	DesiredView.OrthoFarClipPlane = OrthoFarClipPlane;
+	DesiredView.AspectRatio = AspectRatio;
+	DesiredView.bConstrainAspectRatio = bConstrainAspectRatio;
+	DesiredView.bUseFieldOfViewForLOD = bUseFieldOfViewForLOD;
+	DesiredView.ProjectionMode = ProjectionMode;
+
+	// See if the CameraActor wants to override the PostProcess settings used.
+	DesiredView.PostProcessBlendWeight = PostProcessBlendWeight;
+	if (PostProcessBlendWeight > 0.0f)
+	{
+		DesiredView.PostProcessSettings = PostProcessSettings;
+	}
 }
 
 void USGCameraComponent::UpdateCameraModes()

@@ -6,6 +6,8 @@
 #include "SG/Camera/SGCameraMode.h"
 #include "SGCameraMode_ThirdPerson.generated.h"
 
+class UCurveVector;
+
 /**
  * 
  */
@@ -16,6 +18,17 @@ class SG_API USGCameraMode_ThirdPerson : public USGCameraMode
 
 public:
 	USGCameraMode_ThirdPerson(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	/**
+	 * SGCameraMode
+	 */
+	virtual void UpdateView(float DeltaTime) override;
+
+	/**
+	 * member variables
+	 */
+	UPROPERTY(EditDefaultsOnly, Category = "Third Person")
+	TObjectPtr<const UCurveVector> TargetOffsetCurve;
 };
 
 
