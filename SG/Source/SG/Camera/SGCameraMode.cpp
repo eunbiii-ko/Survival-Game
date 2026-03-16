@@ -3,6 +3,7 @@
 
 #include "SG/Camera/SGCameraMode.h"
 
+#include "SGCameraComponent.h"
 #include "SGPlayerCameraManager.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,6 +25,75 @@ USGCameraMode::USGCameraMode(const FObjectInitializer& ObjectInitializer)
 	BlendTime = 0.f;
 	BlendAlpha = 1.f;
 	BlendWeight = 1.f;
+
+	FieldOfView = SG_CAMERA_DEFAULT_FOV;
+	ViewPitchMin = SG_CAMERA_DEFAULT_PITCH_MIN;
+	ViewPitchMax = SG_CAMERA_DEFAULT_PITCH_MAX;
+}
+
+void USGCameraMode::UpdateCameraMode(float DeltaTime)
+{
+	// Actor를 활용하여 Pivot[Location|Rotation]을 계산하여, View를 업데이트한다.
+	UpdateView(DeltaTime);
+}
+
+void USGCameraMode::UpdateView(float DeltaTime)
+{
+	// Character의 Location과 ControlRotation을 활용하여 View를 업데이트한다:
+	// CameraMode를 갖고 있는 CameraComp의 Onwer인 Character(Pawn)을 활용하여,
+	// PivotLocation/Rotation을 반환한다.
+	FVector PivotLocation = GetPivotLocation();
+	FRotator PivotRotation = GetPivotRotation();
+
+	// Pitch 값에 대해 Min/Max를 Clamp 시킨다.
+	PivotRotation.Pitch = FMath::ClampAngle(PivotRotation.Pitch, ViewPitchMin, ViewPitchMax);
+
+	// FSGCameraModeView에 PivotLocation/Rotation 설정
+	View.Location = PivotLocation;
+	View.Rotation = PivotRotation;
+
+	// PivotRotation을 똑같이 ControlRotation으로 활용
+	View.ControlRotation = View.Rotation;
+	View.FieldOfView = FieldOfView;
+}
+
+FVector USGCameraMode::GetPivotLocation() const
+{
+	const AActor* TargetActor = GetTargetActor();
+	check(TargetActor);
+
+	if (const APawn* TargetPawn = Cast<APawn>(TargetActor))
+	{
+		// BaseEyeHeight를 고려하여, ViewLocation을 반환한다.
+		return TargetPawn->GetPawnViewLocation();
+	}
+
+	return TargetActor->GetActorLocation();
+}
+
+FRotator USGCameraMode::GetPivotRotation() const
+{
+	const AActor* TargetActor = GetTargetActor();
+	check(TargetActor);
+
+	if (const APawn* TargetPawn = Cast<APawn>(TargetActor))
+	{
+		// 보통 Pawn의 ControlRotation을 반환한다.
+		return TargetPawn->GetViewRotation();
+	}
+
+	return TargetActor->GetActorRotation();
+}
+
+USGCameraComponent* USGCameraMode::GetSGCameraComponent() const
+{
+	return CastChecked<USGCameraComponent>(GetOuter());
+}
+
+AActor* USGCameraMode::GetTargetActor() const
+{
+	const USGCameraComponent* CameraComp = GetSGCameraComponent();
+	return CameraComp->GetTargetActor();
 }
 
 
@@ -149,6 +219,7 @@ void USGCameraModeStack::UpdateStack(float DeltaTime)
 		USGCameraMode* CameraMode = CameraModeStack[StackIndex];
 		check(CameraMode);
 
+		CameraMode->UpdateCameraMode(DeltaTime);
 
 		// 만약 하나라도 CameraMode가 BlendWeight가 1.0에 도달했다면,
 		// 그 이후 CameraMode를 제거한다.

@@ -31,7 +31,7 @@ public:
 	 */
 	static USGCameraComponent* FindCameraComponent(const AActor* Actor)
 	{ return (Actor ? Actor->FindComponentByClass<USGCameraComponent>() : nullptr); }
-
+	AActor* GetTargetActor() const { return GetOwner(); }
 	
 	/** 현재 CameraMode를 가져온다. */
 	FSGCameraModeDelegate DetermineCameraModeDelegate;

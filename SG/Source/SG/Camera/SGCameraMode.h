@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "SGCameraMode.generated.h"
 
+class USGCameraComponent;
 /**
  * FSGCameraModeView
  *
@@ -34,6 +35,18 @@ class SG_API USGCameraMode : public UObject
 public:
 	USGCameraMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	/**
+	* member methods
+	*/
+	void UpdateCameraMode(float DeltaTime);
+
+protected:
+	virtual void UpdateView(float DeltaTime);
+	void UpdateBlending(float DeltaTime);
+	FVector GetPivotLocation() const;
+	FRotator GetPivotRotation() const;
+	USGCameraComponent* GetSGCameraComponent() const;
+	AActor* GetTargetActor() const;
 	
 public:
 	/** 얼마동안 Blend를 진행할지 시간을 의미 */
@@ -51,7 +64,21 @@ public:
 
 	/** CameraMode에 의해 생성된 CameraModeView */
 	FSGCameraModeView View;
+
+	/** CameraMode의 FOV */
+	UPROPERTY(EditDefaultsOnly, Category = "View",
+		meta = (UIMin = "5.0", UIMax = "170.0", ClampMin = "5.0", ClampMax = "170.0"))
+	float FieldOfView;
+
+	/** View에 대한 Pitch [Min, Max] */
+	UPROPERTY(EditDefaultsOnly, Category = "View",
+		meta = (UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9"))
+	float ViewPitchMin;
+	UPROPERTY(EditDefaultsOnly, Category = "View",
+		meta = (UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9"))
+	float ViewPitchMax;
 };
+
 
 
 /**
