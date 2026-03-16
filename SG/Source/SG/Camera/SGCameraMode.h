@@ -7,6 +7,24 @@
 #include "SGCameraMode.generated.h"
 
 class USGCameraComponent;
+
+/**
+ * [0, 1]을 BlendFunction에 맞게 재매핑을 위한 타입
+ */
+UENUM()
+enum class ESGCameraModeBlendFunction : uint8
+{
+	Linear,
+	/**
+	 * Ease In/Out은 exponent 값에 의해 조절된다.
+	 */
+	EaseIn,
+	EaseOut,
+	EaseInOut,
+	COUNT
+};
+
+
 /**
  * FSGCameraModeView
  *
@@ -77,6 +95,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "View",
 		meta = (UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9"))
 	float ViewPitchMax;
+
+	/**
+	* EaseIn/Out에 사용한 Exponent
+	*/
+	UPROPERTY(EditDefaultsOnly, Category = "Blending")
+	float BlendExponent;
+
+	/** Blend function */
+	ESGCameraModeBlendFunction BlendFunction;
 };
 
 

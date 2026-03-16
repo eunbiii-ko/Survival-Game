@@ -29,12 +29,17 @@ USGCameraMode::USGCameraMode(const FObjectInitializer& ObjectInitializer)
 	FieldOfView = SG_CAMERA_DEFAULT_FOV;
 	ViewPitchMin = SG_CAMERA_DEFAULT_PITCH_MIN;
 	ViewPitchMax = SG_CAMERA_DEFAULT_PITCH_MAX;
+
+	BlendExponent = 4.f;
+	BlendFunction = ESGCameraModeBlendFunction::EaseOut;
 }
 
 void USGCameraMode::UpdateCameraMode(float DeltaTime)
 {
 	// Actor를 활용하여 Pivot[Location|Rotation]을 계산하여, View를 업데이트한다.
 	UpdateView(DeltaTime);
+
+	UpdateBlending(DeltaTime);
 }
 
 void USGCameraMode::UpdateView(float DeltaTime)
@@ -55,6 +60,43 @@ void USGCameraMode::UpdateView(float DeltaTime)
 	// PivotRotation을 똑같이 ControlRotation으로 활용
 	View.ControlRotation = View.Rotation;
 	View.FieldOfView = FieldOfView;
+}
+
+void USGCameraMode::UpdateBlending(float DeltaTime)
+{
+	// DeltaTime, BlendTime을 이용해 BlendAlpha를 계산한다.
+	if (BlendTime > 0.f)
+	{
+		// BlendTime은 Blending 과정 총 시간(초)
+		// - BlendAlpha는 0 -> 1 로 변화하는 과정:
+		// - DeltaTime을 활용하여 BlendTime을 1로 볼 경우, 진행 정도를 누적한다.
+		BlendAlpha += (DeltaTime / BlendTime);
+	}
+	else
+	{
+		BlendAlpha = 1.f;
+	}
+
+	// BlendWeight를 [0, 1]를 BlendFunction에 맞게 재매핑한다:
+	const float Exponent = (BlendExponent > 0.f) ? BlendExponent : 1.f;
+	switch (BlendFunction)
+	{
+	case ESGCameraModeBlendFunction::Linear:
+		BlendWeight = BlendAlpha;
+		break;
+	case ESGCameraModeBlendFunction::EaseIn:
+		BlendWeight = FMath::InterpEaseIn(0.f, 1.f, BlendAlpha, Exponent);
+		break;
+	case ESGCameraModeBlendFunction::EaseOut:
+		BlendWeight = FMath::InterpEaseOut(0.f, 1.f, BlendAlpha, Exponent);
+		break;
+	case ESGCameraModeBlendFunction::EaseInOut:
+		BlendWeight = FMath::InterpEaseInOut(0.f, 1.f, BlendAlpha, Exponent);
+		break;
+	default:
+		checkf(false, TEXT("UpdateBlending: Invalid BlendFunction [%d]\n"), (uint8)BlendFunction);
+		break;
+	}
 }
 
 FVector USGCameraMode::GetPivotLocation() const
