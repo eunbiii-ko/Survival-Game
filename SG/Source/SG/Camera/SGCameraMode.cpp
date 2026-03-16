@@ -14,6 +14,30 @@ FSGCameraModeView::FSGCameraModeView()
 {
 }
 
+void FSGCameraModeView::Blend(const FSGCameraModeView& Other, float OtherWeight)
+{
+	if (OtherWeight <= 0.0f)
+	{
+		return;
+	}
+	if (OtherWeight >= 1.0f)
+	{
+		// 더 최신 View로 덮어 사용한다. 
+		*this = Other;
+		return;
+	}
+
+	// this와 Other의 View를 OtherWeight 비율로 보간한다:
+	Location = FMath::Lerp(Location, Other.Location, OtherWeight);
+
+	const FRotator DeltaRotation = (Other.Rotation - Rotation).GetNormalized();
+	Rotation = Rotation + (OtherWeight * DeltaRotation);
+
+	const FRotator DeltaControlRotation = (Other.ControlRotation - ControlRotation).GetNormalized();
+	ControlRotation = ControlRotation + (OtherWeight * DeltaControlRotation);
+
+	FieldOfView = FMath::Lerp(FieldOfView, Other.FieldOfView, OtherWeight);
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -39,6 +63,8 @@ void USGCameraMode::UpdateCameraMode(float DeltaTime)
 	// Actor를 활용하여 Pivot[Location|Rotation]을 계산하여, View를 업데이트한다.
 	UpdateView(DeltaTime);
 
+	// BlendWeight를 DeltaTime을 활용하여 BlendAlpha 계산 후,
+	// BlendFunction에 맞게 재매핑하여 최종 계산한다.
 	UpdateBlending(DeltaTime);
 }
 
@@ -276,6 +302,29 @@ void USGCameraModeStack::UpdateStack(float DeltaTime)
 	if (RemoveCount > 0)
 	{
 		CameraModeStack.RemoveAt(RemoveIndex, RemoveCount);
+	}
+}
+
+void USGCameraModeStack::BlendStack(FSGCameraModeView& OutCameraModeView) const
+{
+	const int32 StackSize = CameraModeStack.Num();
+	if (StackSize <= 0)
+	{
+		return;
+	}
+
+	// CameraModeStack의 Bottom(과거) -> Top(최신) 순서로 Blend한다. 
+	const USGCameraMode* CameraMode = CameraModeStack[StackSize - 1];
+	check(CameraMode);
+
+	OutCameraModeView = CameraMode->View;
+
+	for (int32 StackIndex = (StackSize - 2); StackIndex >= 0; --StackIndex)
+	{
+		CameraMode = CameraModeStack[StackIndex];
+		check(CameraMode);
+
+		OutCameraModeView.Blend(CameraMode->View, CameraMode->BlendWeight);
 	}
 }
 

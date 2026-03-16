@@ -34,6 +34,8 @@ struct FSGCameraModeView
 {
 	FSGCameraModeView();
 
+	void Blend(const FSGCameraModeView& Other, float OtherWeight);
+
 	FVector Location;
 	FRotator Rotation;
 	FRotator ControlRotation;
@@ -132,6 +134,7 @@ protected:
 	 */
 	USGCameraMode* GetCameraModeInstance(const TSubclassOf<USGCameraMode>& CameraModeClass);
 	void UpdateStack(float DeltaTime);
+	void BlendStack(FSGCameraModeView& OutCameraModeView) const;
 	
 	/**
 	 * member variables
