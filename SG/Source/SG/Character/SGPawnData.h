@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "SGPawnData.generated.h"
 
+class USGInputConfig;
 class USGCameraMode;
 /**
  * 
@@ -25,4 +26,8 @@ public:
 	/** Pawn이 사용하는 Camera Mode */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | PawnData")
 	TSubclassOf<USGCameraMode> CameraModeClass;
+
+	/** Pawn이 사용할 Input */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | InputConfig")
+	TObjectPtr<USGInputConfig> InputConfig;
 };
