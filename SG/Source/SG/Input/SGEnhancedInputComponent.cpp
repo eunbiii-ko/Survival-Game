@@ -3,3 +3,7 @@
 
 #include "SG/Input/SGEnhancedInputComponent.h"
 
+USGEnhancedInputComponent::USGEnhancedInputComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}
