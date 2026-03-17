@@ -6,6 +6,9 @@
 #include "SG/Character/SGHeroComponent.h"
 #include "SGHeroInputComponent.generated.h"
 
+struct FSGMappableConfigPair;
+struct FInputActionValue;
+
 /**
  * 
  */
@@ -28,4 +31,17 @@ public:
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) override;
+
+
+protected:
+	virtual void InitializePlayerInput(UInputComponent* PlayerInputComponent);
+	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_LookMouse(const FInputActionValue& InputActionValue);
+
+	
+	/**
+	 * member variables
+	 */
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSGMappableConfigPair> DefaultInputConfigs;
 };
