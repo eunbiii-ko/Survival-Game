@@ -11,4 +11,9 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataAvailable);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_DataInitialized);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InitState_GameplayReady);
+
+
+	/*** Input Tag */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Mouse);
 }
