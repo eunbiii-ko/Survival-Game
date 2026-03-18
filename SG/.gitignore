@@ -48,7 +48,6 @@ SG/SourceArt/**/*.tga
 
 # Binary Files
 SG/Binaries/*
-SG/Plugins/**/Binaries/*
 
 # Builds
 SG/Build/*
@@ -69,7 +68,6 @@ SG/Saved/*
 
 # Compiled source files for the engine to use
 SG/Intermediate/*
-SG/Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 SG/DerivedDataCache/*
@@ -86,5 +84,3 @@ SG/!Build/Android/res/*/
 SG/Build/Android/res/*/*
 SG/!Build/Android/res/*/*.png
 SG/# Ignore plugins binaries on deep subfolders
-SG/Plugins/**/Binaries/*
-SG/Plugins/**/Intermediate/*
