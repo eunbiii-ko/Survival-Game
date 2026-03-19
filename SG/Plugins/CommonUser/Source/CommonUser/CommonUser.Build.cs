@@ -37,7 +37,7 @@ public class CommonUser : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore", "SG",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

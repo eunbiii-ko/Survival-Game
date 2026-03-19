@@ -21,6 +21,8 @@ public class SG : ModuleRules
 			"EnhancedInput",
 			// Networking
 			"NetCore",
+			// CommonUser
+			"CommonUser",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
