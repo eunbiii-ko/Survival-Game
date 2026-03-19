@@ -9,3 +9,12 @@ ASGPlayerController::ASGPlayerController(const FObjectInitializer& ObjectInitial
 {
 	PlayerCameraManagerClass = ASGPlayerCameraManager::StaticClass();
 }
+
+void ASGPlayerController::ServerRequestMapTravel_Implementation(const FString& TravelURL)
+{
+	// 서버에서만 실행됨
+	if (UWorld* World = GetWorld())
+	{
+		World->ServerTravel(TravelURL);
+	}
+}

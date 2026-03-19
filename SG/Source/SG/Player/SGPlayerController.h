@@ -16,4 +16,7 @@ class SG_API ASGPlayerController : public APlayerController
 
 public:
 	ASGPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void ServerRequestMapTravel(const FString& TravelURL);
 };
