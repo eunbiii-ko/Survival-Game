@@ -6,6 +6,7 @@
 #include "SGExperienceDefinition.h"
 #include "SGExperienceManagerComponent.h"
 #include "SGGameState.h"
+#include "Kismet/GameplayStatics.h"
 #include "SG/SGLogChannels.h"
 #include "SG/Character/SGCharacter.h"
 #include "SG/Character/SGPawnData.h"
@@ -163,6 +164,15 @@ void ASGGameMode::HandleMatchAssignmentIfNotExpectingOne()
 	FPrimaryAssetId ExperienceID;
 	UWorld* World = GetWorld();
 
+	// 앞서 URL과 함께 ExtraArgs로 넘겼던 정보는 OptionsString에 저장되어 있다.
+	if (!ExperienceID.IsValid() && UGameplayStatics::HasOption(OptionsString, TEXT("Experience")))
+	{
+		// Experience의 Value를 가져와서, PrimaryAssetId를 생성한다.
+		// 이때 LccExperienceDefinition의 Class 이름을 사용한다.
+		const FString ExperienceFromOptions = UGameplayStatics::ParseOption(OptionsString, TEXT("Experience"));
+		ExperienceID = FPrimaryAssetId(FPrimaryAssetType(USGExperienceDefinition::StaticClass()->GetFName()), FName(*ExperienceFromOptions));
+	}
+	
 	// 일단 기본 옵션으로 B_LccDefaultExperience로 설정한다.
 	if (!ExperienceID.IsValid())
 	{
