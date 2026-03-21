@@ -1,5 +1,6 @@
 # Visual Studio 2015 user specific files
 SG/.vs/
+SG/Plugins/UEGitPlugin-3.16
 
 # Compiled Object files
 SG/*.slo
@@ -88,3 +89,59 @@ SG/!Build/Android/res/*/*.png
 SG/# Ignore plugins binaries on deep subfolders
 SG/Plugins/**/Binaries/*
 SG/Plugins/**/Intermediate/*
+SG/claude.md
+SG/SG.sln.DotSettings.user
+SG/.claude/settings.local.json
+SG/Docs/HostSession.md
+SG/Plugins/CommonUser/Resources/Icon128.png
+SG/Plugins/UEGitPlugin-3.16/.gitignore
+SG/Plugins/UEGitPlugin-3.16/_config.yml
+SG/Plugins/UEGitPlugin-3.16/git-lfs
+SG/Plugins/UEGitPlugin-3.16/git-lfs.exe
+SG/Plugins/UEGitPlugin-3.16/git-lfs-mac-amd64
+SG/Plugins/UEGitPlugin-3.16/git-lfs-mac-arm64
+SG/Plugins/UEGitPlugin-3.16/GitSourceControl.uplugin
+SG/Plugins/UEGitPlugin-3.16/LICENSE.txt
+SG/Plugins/UEGitPlugin-3.16/README.md
+SG/Plugins/UEGitPlugin-3.16/Resources/Icon128.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/FileHistory.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/SourceControlLogin_Init.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/SourceControlMenu.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/SourceControlStatusTooltip.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/SubmitFiles.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/Icons/Added.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/Icons/Modified.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/Icons/New.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/Icons/Renamed.png
+SG/Plugins/UEGitPlugin-3.16/Screenshots/Icons/Unchanged.png
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/GitSourceControl.Build.cs
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitMessageLog.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlChangelist.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlChangelist.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlChangelistState.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlChangelistState.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlCommand.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlCommand.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlConsole.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlConsole.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlMenu.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlMenu.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlModule.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlModule.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlOperations.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlOperations.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlProvider.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlProvider.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlRevision.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlRevision.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlRunner.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlRunner.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlSettings.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlSettings.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlState.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlState.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlUtils.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/GitSourceControlUtils.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/IGitSourceControlWorker.h
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/SGitSourceControlSettings.cpp
+SG/Plugins/UEGitPlugin-3.16/Source/GitSourceControl/Private/SGitSourceControlSettings.h
