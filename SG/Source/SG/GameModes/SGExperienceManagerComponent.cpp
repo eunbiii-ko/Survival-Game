@@ -131,7 +131,52 @@ void USGExperienceManagerComponent::StartExperienceLoad()
 void USGExperienceManagerComponent::OnExperienceLoadComplete()
 {
 	static int32 OnExperienceLoadCompleteFrameNumber = GFrameNumber;
-	OnExperienceFullLoadComplete();
+
+	check(LoadedState == ESGExperienceLoadState::Loading);
+	check(CurrentExperience);
+
+	// 이전 활성화된 GameFeature Plugin의 URL을 초기화한다.
+	GameFeaturePluginURLs.Reset();
+
+	// 람다식을 만들고, 저장해둔다.
+	auto CollectGameFeaturePluginURLs = [This = this](const UPrimaryDataAsset* Context, const TArray<FString>& FeaturePluginList)
+	{
+		// FeaturePluginList를 순회하며,
+		// PluginURL을 ExperienceManagerComp의 GameFeaturePluginURLs에 추가한다.
+		for (const FString& PluginName : FeaturePluginList)
+		{
+			FString PluginURL;
+			// GetPluginURLByName(): 플러그인 이름(PluginName)을 넣으면 플러그인의 URL(PluginURL)을 반환한다.
+			if (UGameFeaturesSubsystem::Get().GetPluginURLByName(PluginName, PluginURL))
+			{
+				This->GameFeaturePluginURLs.AddUnique(PluginURL);
+			}
+		}
+	};
+
+	// 일단 GameFeaturePluginURLs에 있는 Plugin만 활성화할 GameFeature Plugin 후보군으로 등록한다.
+	CollectGameFeaturePluginURLs(CurrentExperience, CurrentExperience->GameFeaturesToEnable);
+
+	// GameFeaturePluginURLs에 등록된 Plugin을 로딩 및 활성화한다.
+	NumGameFeaturePluginsLoading = GameFeaturePluginURLs.Num();
+	if (NumGameFeaturePluginsLoading)
+	{
+		LoadedState = ESGExperienceLoadState::LoadingGameFeatures;
+		for (const FString& PluginURL : GameFeaturePluginURLs)
+		{
+			// LoadAndActivateGameFeaturePlugin(): GameFeature 로딩과 동시에 활성화까지 해준다.
+			// -> GameFeature 활성화가 되었을 때 어떤 함수를 부를지 델리게이트 설정이 가능하다. 
+			// 매 Plugin이 로딩 및 활성화 이후,
+			// OnGameFeaturePluginLoadComplete() 콜백 함수를 등록한다.
+			UGameFeaturesSubsystem::Get().LoadAndActivateGameFeaturePlugin(PluginURL,
+				FGameFeaturePluginLoadComplete::CreateUObject(this, &ThisClass::OnGameFeaturePluginLoadComplete));
+		}
+	}
+	else
+	{
+		// 해당 함수가 불리는 것은 앞서 보았던 StreamableDelegateDelayHelper에 의해 불린다.
+		OnExperienceFullLoadComplete();
+	}
 }
 
 void USGExperienceManagerComponent::OnExperienceFullLoadComplete()
@@ -142,4 +187,16 @@ void USGExperienceManagerComponent::OnExperienceFullLoadComplete()
 	LoadedState = ESGExperienceLoadState::Loaded;
 	OnExperienceLoaded.Broadcast(CurrentExperience);
 	OnExperienceLoaded.Clear();
+}
+
+void USGExperienceManagerComponent::OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& Result)
+{
+	// 매 GameFeature Plugin이 로딩될 때, 해당 함수가 콜백으로 불린다.
+	NumGameFeaturePluginsLoading--;
+	if (NumGameFeaturePluginsLoading == 0)
+	{
+		// GameFeaturePlugin 로딩이 다 끝났을 경우,
+		// 기존 Loaded로서 OnExperienceFullLoadComplete()를 호출한다.
+		OnExperienceFullLoadComplete();
+	}
 }

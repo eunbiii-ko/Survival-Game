@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/GameStateComponent.h"
+#include "GameFeaturePluginOperationResult.h"
 #include "SGExperienceManagerComponent.generated.h"
 
 class USGExperienceDefinition;
@@ -14,6 +15,7 @@ enum class ESGExperienceLoadState
 {
 	Unloaded,		// 로드 안됨
 	Loading,		// 로드중
+	LoadingGameFeatures, // GemeFeature 로딩중
 	Loaded,			// 로드됨
 	Deactivating,	// 로딩 해제
 };
@@ -52,6 +54,7 @@ private:
 	void StartExperienceLoad();
 	void OnExperienceLoadComplete();
 	void OnExperienceFullLoadComplete();
+	void OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& Result);
 	
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentExperience)
@@ -62,4 +65,8 @@ private:
 
 	/** Experience 로딩이 완료된 후, Broadcasting Delegate */
 	FOnSGExperienceLoaded OnExperienceLoaded;
+
+	/** 활성화된 GameFeature Plugins */
+	int32 NumGameFeaturePluginsLoading = 0;
+	TArray<FString> GameFeaturePluginURLs;
 };
