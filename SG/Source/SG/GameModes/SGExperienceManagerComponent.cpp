@@ -7,6 +7,8 @@
 #include "SG/System/SGAssetManager.h"
 #include "GameFeaturesSubsystem.h"
 #include "GameFeaturesSubsystemSettings.h"
+#include "SGExperienceActionSet.h"
+#include "GameFeatureAction.h"
 
 USGExperienceManagerComponent::USGExperienceManagerComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -182,6 +184,49 @@ void USGExperienceManagerComponent::OnExperienceLoadComplete()
 void USGExperienceManagerComponent::OnExperienceFullLoadComplete()
 {
 	check(LoadedState != ESGExperienceLoadState::Loaded);
+
+	// GameFeature Plugin의 로딩과 활성화 이후, GameFeatuer Action들을 활성화시킨다.
+	{
+		LoadedState = ESGExperienceLoadState::ExecutingActions;
+
+		// GameFeatureAction 활성화를 위한 Context 준비
+		// 어떤 World인지 설명하기 위해, 현재 World에 WorldContext를 넣어준다. 
+		FGameFeatureActivatingContext Context;
+		{
+			// 월드의 핸들을 세팅한다.
+			const FWorldContext* ExistingWorldContext = GEngine->GetWorldContextFromWorld(GetWorld());
+			if (ExistingWorldContext)
+			{
+				Context.SetRequiredWorldContextHandle(ExistingWorldContext->ContextHandle);
+			}
+		}
+
+		// 모든 GameFeature Action(ActionList)을 순회하면서 등록 -> 로드 -> 활성화한다.
+		// -> 자동으로 Action이 활성화된다.
+		auto ActivateListOfActions = [&Context](const TArray<UGameFeatureAction*>& ActionList)
+		{
+			for (UGameFeatureAction* Action : ActionList)
+			{
+				// 명시적으로 GameFeatureAction에 대해
+				// Registering -> Loading -> Activating 순으로 호출한다.
+				if (Action)
+				{
+					Action->OnGameFeatureRegistering();
+					Action->OnGameFeatureLoading();
+					Action->OnGameFeatureActivating(Context);
+				}
+			}
+		};
+
+		// 1. Experience의 Actions
+		ActivateListOfActions(CurrentExperience->Actions);
+
+		// 2. Experience의 ActionSets
+		for (const TObjectPtr<USGExperienceActionSet>& ActionSet : CurrentExperience->ActionSets)
+		{
+			ActivateListOfActions(ActionSet->Actions);
+		}
+	}
 
 	// 로드 완료 상태로 업데이트한다.
 	LoadedState = ESGExperienceLoadState::Loaded;

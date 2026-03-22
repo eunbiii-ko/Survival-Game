@@ -16,6 +16,7 @@ enum class ESGExperienceLoadState
 	Unloaded,		// 로드 안됨
 	Loading,		// 로드중
 	LoadingGameFeatures, // GemeFeature 로딩중
+	ExecutingActions,		// GameFeature 내 Action 실행 
 	Loaded,			// 로드됨
 	Deactivating,	// 로딩 해제
 };
