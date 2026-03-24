@@ -11,8 +11,10 @@
 #include "SG/Input/SGMappableConfigPair.h"
 #include "EnhancedInputSubsystemInterface.h"
 #include "PlayerMappableInputConfig.h"
+#include "Components/GameFrameworkComponentManager.h"
 
 const FName USGHeroInputComponent::NAME_ActorFeatureName("HeroInput");
+const FName USGHeroInputComponent::NAME_BindInputsNow("BindInputsNow");
 
 USGHeroInputComponent::USGHeroInputComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -108,6 +110,12 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 			}
 		}
 	}
+
+	// GameFeatureAction_AddInputConfig의 HandlePawnExtension 콜백 함수 전달
+	// SendGameFrameworkComponentExtensionEvent(): 이벤트 요청 가능
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+	const_cast<APawn*>(Pawn), 
+	NAME_BindInputsNow);
 }
 
 void USGHeroInputComponent::Input_Move(const FInputActionValue& InputActionValue)
