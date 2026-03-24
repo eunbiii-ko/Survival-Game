@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ModularCharacter.h"
 #include "GameFramework/Character.h"
 #include "SGCharacter.generated.h"
 
@@ -10,7 +11,7 @@ class USGCameraComponent;
 class USGPawnExtensionComponent;
 
 UCLASS()
-class SG_API ASGCharacter : public ACharacter
+class SG_API ASGCharacter : public AModularCharacter
 {
 	GENERATED_BODY()
 

@@ -16,6 +16,7 @@ public class SG : ModuleRules
 			// Game Features
 			"ModularGameplay",
 			"GameFeatures",
+			"ModularGameplayActors",
 			// Input
 			"InputCore",
 			"EnhancedInput",
