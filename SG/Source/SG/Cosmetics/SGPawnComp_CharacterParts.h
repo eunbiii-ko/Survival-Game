@@ -9,6 +9,9 @@
 #include "SG/Cosmetics/SGCosmeticAnimationTypes.h"
 #include "SGPawnComp_CharacterParts.generated.h"
 
+class USkeletalMeshComponent;
+
+
 /** 인스턴스화된 Character Part 단위 */
 USTRUCT()
 struct FSGAppliedCharacterPartEntry : public FFastArraySerializerItem
@@ -47,15 +50,21 @@ struct FSGCharacterPartList : public FFastArraySerializer
 	FSGCharacterPartList(USGPawnComp_CharacterParts* InOwnerComp)
 		: OwnerComp(InOwnerComp)
 	{}
+
+	FSGCharacterPartHandle AddEntry(const FSGCharacterPart& NewPart);
+
+private:
+	bool SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry);
+
 	
-	
+public:
 	/** 현재 인스턴스화된 Character Part */
 	UPROPERTY()
 	TArray<FSGAppliedCharacterPartEntry> Entries;
 
 	
 	/** 해당 LccCharacterPartList의 Onwer인 PawnComp */
-	UPROPERTY()
+	UPROPERTY(NotReplicated)
 	TObjectPtr<USGPawnComp_CharacterParts> OwnerComp;
 	
 	/** PartHandle의 값을 할당 및 관리하는 변수 */
@@ -74,17 +83,22 @@ class SG_API USGPawnComp_CharacterParts : public UPawnComponent
 
 public:
 	USGPawnComp_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	
 	FSGCharacterPartHandle AddCharacterPart(const FSGCharacterPart& NewPart);
+	
+	USkeletalMeshComponent* GetParentMeshComponent() const;
+	USceneComponent* GetSceneComponentToAttachTo() const;
 	
 private:
 	/** 인스턴스화된 Character Parts */
-	UPROPERTY(meta = (AllowPrivateAccess = true))
+	UPROPERTY(Replicated, Transient)
 	FSGCharacterPartList CharacterPartList;
 
 	/** 애니메이션 적용을 위한 메시와 연결고리 */
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics", meta = (AllowPrivateAccess = true))
 	FSGAnimBodyStyleSelectionSet BodyMeshes;
 };
+
 
 
