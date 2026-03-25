@@ -25,6 +25,8 @@ struct FSGAnimBodyStyleSelectionSet
 {
 	GENERATED_BODY()
 
+	USkeletalMesh* SelectBestBodyStyle(const FGameplayTagContainer& CosmeticTags) const;
+	
 	/** AnimLayer 적용할 SkeletalMesh를 들고 있다. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSGAnimBodyStyleSelectionEntry> MeshRules;

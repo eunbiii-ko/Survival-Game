@@ -9,6 +9,20 @@ USGControllerComp_CharacterParts::USGControllerComp_CharacterParts(const FObject
 {
 }
 
+void USGControllerComp_CharacterParts::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		if (AController* OwningController = GetController<AController>())
+		{
+			OwningController->OnPossessedPawnChanged.AddDynamic(
+				this, &ThisClass::OnPossessedPawnChanged);
+		}
+	}
+}
+
 void USGControllerComp_CharacterParts::AddCharacterPart(const FSGCharacterPart& NewPart)
 {
 	AddCharacterPartInternal(NewPart);
@@ -34,4 +48,29 @@ USGPawnComp_CharacterParts* USGControllerComp_CharacterParts::GetPawnCustomizer(
 		return ControlledPawn->FindComponentByClass<USGPawnComp_CharacterParts>();
 	}
 	return nullptr;
+}
+
+void USGControllerComp_CharacterParts::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
+{
+	// 이전 OldPawn에 대한 CharacterParts를 모두 제거한다.
+	if (USGPawnComp_CharacterParts* OldCustomizer =
+		OldPawn ? OldPawn->FindComponentByClass<USGPawnComp_CharacterParts>() : nullptr)
+	{
+		for (FSGControllerCharacterPartEntry& Entry : CharacterParts)
+		{
+			//OldCustomizer->RemoveCharacterPart(Entry.Handle);
+			Entry.Handle.Reset();
+		}
+	}
+
+	// 새로운 Pawn에 대해서 기존 Controller가 갖고 있는 CharacterPart를 추가한다.
+	if (USGPawnComp_CharacterParts* NewCustomizer =
+		NewPawn ? NewPawn->FindComponentByClass<USGPawnComp_CharacterParts>() : nullptr)
+	{
+		for (FSGControllerCharacterPartEntry& Entry : CharacterParts)
+		{
+			check(!Entry.Handle.IsValid());
+			Entry.Handle = NewCustomizer->AddCharacterPart(Entry.Part);
+		}
+	}
 }

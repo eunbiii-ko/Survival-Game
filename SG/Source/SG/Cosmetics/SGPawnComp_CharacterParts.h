@@ -11,6 +11,7 @@
 
 class USkeletalMeshComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSGSpawnedCharacterPartsChanged, USGPawnComp_CharacterParts*, ComponentWithChangedParts);
 
 /** 인스턴스화된 Character Part 단위 */
 USTRUCT()
@@ -27,11 +28,11 @@ struct FSGAppliedCharacterPartEntry : public FFastArraySerializerItem
 	 *  - FLccControllerCharacterPartEntry의 Handle값과 값이 같아야 한다.
 	 *    -> 같으면 같은 Part
 	 * */
-	UPROPERTY()
+	UPROPERTY(NotReplicated)
 	int32 PartHandle = INDEX_NONE;
 
 	/** 인스턴스화된 Character Part용 Actor */
-	UPROPERTY()
+	UPROPERTY(NotReplicated)
 	TObjectPtr<UChildActorComponent> SpawnedComp = nullptr;
 };
 
@@ -52,7 +53,20 @@ struct FSGCharacterPartList : public FFastArraySerializer
 	{}
 
 	FSGCharacterPartHandle AddEntry(const FSGCharacterPart& NewPart);
+	FGameplayTagContainer CollectCombinedTags() const;
 
+public:
+	// ~FFastArraySerializer contract
+	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
+	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
+	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
+	// ~End of FFastArraySerializer contract
+
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
+	{
+		return FFastArraySerializer::FastArrayDeltaSerialize<FSGAppliedCharacterPartEntry, FSGCharacterPartList>(Entries, DeltaParms, *this);
+	}
+	
 private:
 	bool SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry);
 
@@ -71,6 +85,13 @@ public:
 	int32 PartHandleCounter = 0;
 };
 
+template<>
+struct TStructOpsTypeTraits<FSGCharacterPartList> : public TStructOpsTypeTraitsBase2<FSGCharacterPartList>
+{
+	enum { WithNetDeltaSerializer = true };
+};
+
+
 //////////////////////////////////////////////////////////////////////
 
 /**
@@ -83,12 +104,20 @@ class SG_API USGPawnComp_CharacterParts : public UPawnComponent
 
 public:
 	USGPawnComp_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	virtual void OnRegister() override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	
 	FSGCharacterPartHandle AddCharacterPart(const FSGCharacterPart& NewPart);
+	void BroadcastChanged();
 	
 	USkeletalMeshComponent* GetParentMeshComponent() const;
 	USceneComponent* GetSceneComponentToAttachTo() const;
+
+
+	FGameplayTagContainer GetCombinedTags(FGameplayTag RequiredPrefix) const;
+
+	UPROPERTY(BlueprintAssignable, Category=Cosmetics, BlueprintCallable)
+	FSGSpawnedCharacterPartsChanged OnCharacterPartsChanged;
 	
 private:
 	/** 인스턴스화된 Character Parts */

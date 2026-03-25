@@ -38,7 +38,7 @@ class SG_API USGControllerComp_CharacterParts : public UControllerComponent
 
 public:
 	USGControllerComp_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	virtual void BeginPlay() override;
 
 private:
 	UFUNCTION(BlueprintCallable, Category = "Cosmetics")
@@ -46,6 +46,8 @@ private:
 	void AddCharacterPartInternal(const FSGCharacterPart& NewPart);
 
 	USGPawnComp_CharacterParts* GetPawnCustomizer() const;
+	UFUNCTION()
+	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
