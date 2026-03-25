@@ -32,6 +32,8 @@ struct FSGAppliedCharacterPartEntry : public FFastArraySerializerItem
 	TObjectPtr<UChildActorComponent> SpawnedComp = nullptr;
 };
 
+//////////////////////////////////////////////////////////////////////
+
 /** LccPawnComp_CharacterParts에서 실질적 Character Parts를 관리하는 클래스 */
 USTRUCT(BlueprintType)
 struct FSGCharacterPartList : public FFastArraySerializer
@@ -46,6 +48,7 @@ struct FSGCharacterPartList : public FFastArraySerializer
 		: OwnerComp(InOwnerComp)
 	{}
 	
+	
 	/** 현재 인스턴스화된 Character Part */
 	UPROPERTY()
 	TArray<FSGAppliedCharacterPartEntry> Entries;
@@ -59,6 +62,8 @@ struct FSGCharacterPartList : public FFastArraySerializer
 	int32 PartHandleCounter = 0;
 };
 
+//////////////////////////////////////////////////////////////////////
+
 /**
  * 
  */
@@ -70,6 +75,8 @@ class SG_API USGPawnComp_CharacterParts : public UPawnComponent
 public:
 	USGPawnComp_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	FSGCharacterPartHandle AddCharacterPart(const FSGCharacterPart& NewPart);
+	
 private:
 	/** 인스턴스화된 Character Parts */
 	UPROPERTY(meta = (AllowPrivateAccess = true))
@@ -79,3 +86,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics", meta = (AllowPrivateAccess = true))
 	FSGAnimBodyStyleSelectionSet BodyMeshes;
 };
+
+

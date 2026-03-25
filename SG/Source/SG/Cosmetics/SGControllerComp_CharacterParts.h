@@ -7,6 +7,8 @@
 #include "SG/Cosmetics/SGCharacterPartTypes.h"
 #include "SGControllerComp_CharacterParts.generated.h"
 
+class USGPawnComp_CharacterParts;
+
 /** ControllerComp가 소유하는 Character Parts */
 USTRUCT()
 struct FSGControllerCharacterPartEntry
@@ -37,7 +39,15 @@ class SG_API USGControllerComp_CharacterParts : public UControllerComponent
 public:
 	USGControllerComp_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+
+private:
+	UFUNCTION(BlueprintCallable, Category = "Cosmetics")
+	void AddCharacterPart(const FSGCharacterPart& NewPart);
+	void AddCharacterPartInternal(const FSGCharacterPart& NewPart);
+
+	USGPawnComp_CharacterParts* GetPawnCustomizer() const;
+	
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Cosmetic")
+	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
 	TArray<FSGControllerCharacterPartEntry> CharacterParts;
 };
