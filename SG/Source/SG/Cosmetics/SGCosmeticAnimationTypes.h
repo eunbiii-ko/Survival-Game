@@ -39,3 +39,32 @@ struct FSGAnimBodyStyleSelectionSet
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UPhysicsAsset> ForcedPhysicsAsset = nullptr;
 };
+
+///////////////////////////////////////////////////////////////////
+
+USTRUCT(BlueprintType)
+struct FSGAnimLayerSelectionEntry
+{
+	GENERATED_BODY()
+
+	// GameplayTag를 기반으로 AnimLayer를 가져온다.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UAnimInstance> Layer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTagContainer RequiredTags;
+};
+
+USTRUCT(BlueprintType)
+struct FSGAnimLayerSelectionSet
+{
+	GENERATED_BODY()
+
+	/** Animation Rule을 가진 LayerRules */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSGAnimLayerSelectionEntry> LayerRules;
+
+	/** 디폴트 Layer */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UAnimInstance> DefaultLayer;
+};
