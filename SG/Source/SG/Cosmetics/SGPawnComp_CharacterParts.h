@@ -53,6 +53,8 @@ struct FSGCharacterPartList : public FFastArraySerializer
 	{}
 
 	FSGCharacterPartHandle AddEntry(const FSGCharacterPart& NewPart);
+	void RemoveEntry(FSGCharacterPartHandle Handle);
+	
 	FGameplayTagContainer CollectCombinedTags() const;
 
 public:
@@ -69,7 +71,7 @@ public:
 	
 private:
 	bool SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry);
-
+	void DestroyActorForEntry(FSGAppliedCharacterPartEntry& Entry);
 	
 public:
 	/** 현재 인스턴스화된 Character Part */
@@ -108,6 +110,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	
 	FSGCharacterPartHandle AddCharacterPart(const FSGCharacterPart& NewPart);
+	void RemoveCharacterPart(FSGCharacterPartHandle Handle);
+	
 	void BroadcastChanged();
 	
 	USkeletalMeshComponent* GetParentMeshComponent() const;

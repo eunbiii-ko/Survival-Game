@@ -23,6 +23,13 @@ void USGControllerComp_CharacterParts::BeginPlay()
 	}
 }
 
+void USGControllerComp_CharacterParts::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	RemoveAllCharacterParts();
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 void USGControllerComp_CharacterParts::AddCharacterPart(const FSGCharacterPart& NewPart)
 {
 	AddCharacterPartInternal(NewPart);
@@ -39,6 +46,19 @@ void USGControllerComp_CharacterParts::AddCharacterPartInternal(const FSGCharact
 	{
 		NewEntry.Handle = PawnCustomizer->AddCharacterPart(NewPart);
 	}
+}
+
+void USGControllerComp_CharacterParts::RemoveAllCharacterParts()
+{
+	if (USGPawnComp_CharacterParts* PawnCustomizer = GetPawnCustomizer())
+	{
+		for (FSGControllerCharacterPartEntry& Entry : CharacterParts)
+		{
+			PawnCustomizer->RemoveCharacterPart(Entry.Handle);
+		}
+	}
+
+	CharacterParts.Reset();
 }
 
 USGPawnComp_CharacterParts* USGControllerComp_CharacterParts::GetPawnCustomizer() const

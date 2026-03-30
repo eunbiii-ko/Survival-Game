@@ -35,6 +35,20 @@ FSGCharacterPartHandle FSGCharacterPartList::AddEntry(const FSGCharacterPart& Ne
 	return Result;
 }
 
+void FSGCharacterPartList::RemoveEntry(FSGCharacterPartHandle Handle)
+{
+	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
+	{
+		FSGAppliedCharacterPartEntry& Entry = *EntryIt;
+
+		// 제거할 경우, Part Handle을 활용한다.
+		if (Entry.PartHandle == Handle.PartHandle)
+		{
+			DestroyActorForEntry(Entry);
+		}
+	}
+}
+
 FGameplayTagContainer FSGCharacterPartList::CollectCombinedTags() const
 {
 	FGameplayTagContainer Result;
@@ -135,10 +149,19 @@ bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entr
 	return bCreatedAnyActor;
 }
 
+void FSGCharacterPartList::DestroyActorForEntry(FSGAppliedCharacterPartEntry& Entry)
+{
+	if (Entry.SpawnedComp)
+	{
+		Entry.SpawnedComp->DestroyComponent();
+		Entry.SpawnedComp = nullptr;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////
 
 USGPawnComp_CharacterParts::USGPawnComp_CharacterParts(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer), CharacterPartList(this)
 {
 	SetIsReplicatedByDefault(true);
 }
@@ -163,6 +186,11 @@ FSGCharacterPartHandle USGPawnComp_CharacterParts::AddCharacterPart(const FSGCha
 	return CharacterPartList.AddEntry(NewPart);
 }
 
+void USGPawnComp_CharacterParts::RemoveCharacterPart(FSGCharacterPartHandle Handle)
+{
+	CharacterPartList.RemoveEntry(Handle);
+}
+
 void USGPawnComp_CharacterParts::BroadcastChanged()
 {
 	const bool bReinitPose = true;
@@ -172,7 +200,9 @@ void USGPawnComp_CharacterParts::BroadcastChanged()
 	{
 		// BodyMeshes를 통해, GameplayTag를 활용하여 Tag에 맞은 SkeletalMesh로 재설정한다.
 		// (Tag에 맞는 Mesh가 업으면 DefaultMesh를 반환한다.)
+		// Tag를 가져와서
 		const FGameplayTagContainer MergedTags = GetCombinedTags(FGameplayTag());
+		// Tag에 맞는 Mesh를 가져온다.
 		USkeletalMesh* DesiredMesh = BodyMeshes.SelectBestBodyStyle(MergedTags);
 
 		// SkeletalMesh를 초기화 및 Animation 초기화 시켜준다.
