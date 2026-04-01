@@ -3,3 +3,7 @@
 
 #include "SG/Inventory/SGInventoryItemInstance.h"
 
+USGInventoryItemInstance::USGInventoryItemInstance(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}

@@ -6,7 +6,46 @@
 #include "Components/ActorComponent.h"
 #include "SGInventoryManagerComponent.generated.h"
 
+class USGInventoryItemInstance;
 
+//////////////////////////////////////////////////////////////////////
+
+/** Inventory Item 단위 객체 */
+USTRUCT(BlueprintType)
+struct FSGInventoryEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TObjectPtr<USGInventoryItemInstance> Instance = nullptr;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+/** Inventory Item 관리 객체 */
+USTRUCT(BlueprintType)
+struct FSGInventoryList
+{
+	GENERATED_BODY()
+
+	FSGInventoryList(UActorComponent* InOwnerComp = nullptr)
+		: OwnerComp(InOwnerComp)
+	{}
+
+	UPROPERTY()
+	TArray<FSGInventoryEntry> Entries;
+
+	UPROPERTY()
+	TObjectPtr<UActorComponent> OwnerComp;
+};
+
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * PlayerController의 Component로서 Inventory를 관리한다.
+ *  - ActorComp가 아닌 ControllerComp를 상속받아도 될 것 같은데,
+ *	  일단 Lyra 기준으로 ActorComp를 상속받음. 
+ */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SG_API USGInventoryManagerComponent : public UActorComponent
 {
@@ -14,15 +53,8 @@ class SG_API USGInventoryManagerComponent : public UActorComponent
 
 public:	
 	// Sets default values for this component's properties
-	USGInventoryManagerComponent();
+	USGInventoryManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+	UPROPERTY()
+	FSGInventoryList InventoryList;
 };

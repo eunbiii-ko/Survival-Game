@@ -6,6 +6,27 @@
 #include "UObject/NoExportTypes.h"
 #include "SGInventoryItemDefinition.generated.h"
 
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * Inventory에 대한 Fragment는 확 와닫지 않을 수 있다.
+ * Lyra에서 사용하는 예시를 통해 이해해본다.
+ *	- ULyraInventoryFragment_EquippableItem은 EquipmentItemDefinition을 갖고 있으며,
+ *		장착 가능한 아이템을 의미한다.
+ *	- ULyraInventoryFragment_SetStats는 아이템에 대한 정보를 가지고 있다.
+ *		- Rifle에 대한 SetStats으로 총알에 대한 장착 최대치와 현재 남은 잔탄 수 등..
+ */
+UCLASS(Abstract, DefaultToInstanced, EditInlineNew)
+class USGInventoryItemFragment : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	
+};
+
+//////////////////////////////////////////////////////////////////////
+
 /**
  * 
  */
@@ -14,4 +35,14 @@ class SG_API USGInventoryItemDefinition : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+	USGInventoryItemDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	/** Inventory Item 정의(메타) 이름 */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Display")
+	FText DisplayName;
+
+	/** Inventory Item의 Component를 Fragment로 인식하면 된다. */
+	UPROPERTY(EditDefaultsOnly, Instanced, BlueprintReadOnly, Category = "Display")
+	TArray<TObjectPtr<USGInventoryItemFragment>> Fragments;
 };
