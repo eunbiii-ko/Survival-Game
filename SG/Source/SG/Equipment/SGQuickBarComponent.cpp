@@ -3,3 +3,7 @@
 
 #include "SG/Equipment/SGQuickBarComponent.h"
 
+USGQuickBarComponent::USGQuickBarComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}
