@@ -3,3 +3,7 @@
 
 #include "SG/Equipment/SGEquipmentManagerComponent.h"
 
+USGEquipmentManagerComponent::USGEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer), EquipmentList(this)
+{
+}
