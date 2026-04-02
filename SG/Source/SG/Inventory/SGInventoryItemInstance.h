@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "SGInventoryItemInstance.generated.h"
 
+class USGInventoryItemFragment;
 class USGInventoryItemDefinition;
 /**
  * 
@@ -18,6 +19,14 @@ class SG_API USGInventoryItemInstance : public UObject
 public:
 	USGInventoryItemInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	const USGInventoryItemFragment* FindFragmentByClass(TSubclassOf<USGInventoryItemFragment> FragmentClass) const;
+
+	template <typename ResultClass>
+	const ResultClass* FindFragmentByClass() const
+	{
+		return (ResultClass*)FindFragmentByClass(ResultClass::StaticClass());
+	}
+	
 	/**
 	 * Inventory Item의 인스턴스에는 무엇으로 정의되어 있는지
 	 * 메타 클래스인 LccInventoryItemDefinition을 들고 있다.

@@ -8,6 +8,7 @@
 
 class USGInventoryItemInstance;
 class USGEquipmentInstance;
+class USGEquipmentManagerComponent;
 
 /**
  * 해당 컴포넌트는 ControllerComp로서, PC에 의해 조작계 중 하나로 생각해도 된다.
@@ -28,6 +29,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void AddItemToSlot(int32 SlotIndex, USGInventoryItemInstance* Item);
+	UFUNCTION(BlueprintCallable)
+	void SetActiveSlotIndex(int32 NewIndex);
+
+	USGEquipmentManagerComponent* FindEquipmentManager() const;
+	void UnequipItemInSlot();
+	void EquipItemInSlot();
 	
 	/** HUD QuickBar Slot 개수 */
 	UPROPERTY()

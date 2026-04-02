@@ -38,6 +38,8 @@ class SG_API USGInventoryItemDefinition : public UObject
 public:
 	USGInventoryItemDefinition(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	const USGInventoryItemFragment* FindFragmentByClass(TSubclassOf<USGInventoryItemFragment> FragmentClass) const;
+	
 	/** Inventory Item 정의(메타) 이름 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Display")
 	FText DisplayName;
