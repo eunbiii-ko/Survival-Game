@@ -30,7 +30,7 @@ public:
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class SG_API USGInventoryItemDefinition : public UObject
 {
 	GENERATED_BODY()

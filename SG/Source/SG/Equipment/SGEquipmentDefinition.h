@@ -33,7 +33,7 @@ struct FSGEquipmentActorToSpawn
 /**
  * 장착 아이템에 대한 정의 클래스(메타 데이터)
  */
-UCLASS()
+UCLASS(Blueprintable)
 class SG_API USGEquipmentDefinition : public UObject
 {
 	GENERATED_BODY()
