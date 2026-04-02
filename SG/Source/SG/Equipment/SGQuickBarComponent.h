@@ -21,6 +21,14 @@ class SG_API USGQuickBarComponent : public UControllerComponent
 public:
 	USGQuickBarComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	/**
+	 * ControllerComponent interface
+	 */
+	virtual void BeginPlay() override;
+	
+	UFUNCTION(BlueprintCallable)
+	void AddItemToSlot(int32 SlotIndex, USGInventoryItemInstance* Item);
+	
 	/** HUD QuickBar Slot 개수 */
 	UPROPERTY()
 	int32 NumSlots = 3;

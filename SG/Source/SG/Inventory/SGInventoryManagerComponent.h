@@ -7,6 +7,7 @@
 #include "SGInventoryManagerComponent.generated.h"
 
 class USGInventoryItemInstance;
+class USGInventoryItemDefinition;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -32,6 +33,8 @@ struct FSGInventoryList
 		: OwnerComp(InOwnerComp)
 	{}
 
+	USGInventoryItemInstance* AddEntry(TSubclassOf<USGInventoryItemDefinition> ItemDef);
+	
 	UPROPERTY()
 	TArray<FSGInventoryEntry> Entries;
 
@@ -55,6 +58,10 @@ public:
 	// Sets default values for this component's properties
 	USGInventoryManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	/** InventoryItemDefinition을 통해 InventoryList에 추가하여 관리하며, InventoryItemInstance를 반환한다. */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	USGInventoryItemInstance* AddItemDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDef);
+	
 	UPROPERTY()
 	FSGInventoryList InventoryList;
 };
