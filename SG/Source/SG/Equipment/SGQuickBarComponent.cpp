@@ -2,6 +2,8 @@
 
 
 #include "SG/Equipment/SGQuickBarComponent.h"
+
+#include "SGEquipmentDefinition.h"
 #include "SG/Equipment/SGEquipmentManagerComponent.h"
 #include "SG/Inventory/SGInventoryItemFragment_EquippableItem.h"
 #include "SG/Inventory/SGInventoryItemInstance.h"

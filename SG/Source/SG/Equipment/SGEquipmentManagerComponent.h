@@ -40,6 +40,9 @@ struct FSGEquipmentList
 		: OwnerComp(InOwnerComp)
 	{}
 
+	USGEquipmentInstance* AddEntry(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
+	void RemoveEntry(USGEquipmentInstance* Instance);
+	
 	/** 장착물에 대한 관리 리스트 */
 	UPROPERTY()
 	TArray<FSGAppliedEquipmentEntry> Entries;
@@ -60,6 +63,10 @@ class SG_API USGEquipmentManagerComponent : public UPawnComponent
 public:
 	USGEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+
+	USGEquipmentInstance* EquipItem(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
+	void UnequipItem(USGEquipmentInstance* ItemInstance);
+	
 	UPROPERTY()
 	FSGEquipmentList EquipmentList;
 };
