@@ -18,7 +18,13 @@ class SG_API USGEquipmentInstance : public UObject
 	GENERATED_BODY()
 public:
 	USGEquipmentInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	
+	//~UObject interface
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	virtual UWorld* GetWorld() const override final;
+	//~End of UObject interface
+	
 	/**
 	 * BP 정의를 위한 Equip/Unequip 함수
 	 */
@@ -39,12 +45,18 @@ public:
 	 */
 	virtual void OnEquipped();
 	virtual void OnUnequipped();
-	
+
+private:
+	UFUNCTION()
+	void OnRep_Instigator();
+
+public:
 	/** 어떤 InventoryItemInstance에 의해 활성화되었는지 */
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing=OnRep_Instigator)
 	TObjectPtr<UObject> Instigator;
 
 	/** SGEquipmentDefinition에 맞게 Spawn된 Actor Isntance들 */
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<TObjectPtr<AActor>> SpawnedActors;
+
 };

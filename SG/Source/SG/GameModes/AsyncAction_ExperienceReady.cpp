@@ -2,15 +2,15 @@
 
 
 #include "SG/GameModes/AsyncAction_ExperienceReady.h"
-
 #include "SGExperienceManagerComponent.h"
+#include "SG/SGLogChannels.h"
 
 UAsyncAction_ExperienceReady::UAsyncAction_ExperienceReady(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-UAsyncAction_ExperienceReady* UAsyncAction_ExperienceReady::WaitForExperienceReady(UObject* WorldContextObject)
+UAsyncAction_ExperienceReady* UAsyncAction_ExperienceReady::WaitForExperienceReady2(UObject* WorldContextObject)
 {
 	UAsyncAction_ExperienceReady* Action = nullptr;
 	// WorldContextObject에 맞는 World를 받아온다. 
@@ -102,5 +102,8 @@ void UAsyncAction_ExperienceReady::Step4_BroadcastReady()
 {
 	// 바인딩된 BP 혹은 UFUNCTION을 호출한다.
 	OnReady.Broadcast();
+	UE_LOG(LogSG, Display, TEXT("[BC] UAsyncAction_ExperienceReady::Step4_BroadcastReady()"));
 	SetReadyToDestroy();
+
+	
 }

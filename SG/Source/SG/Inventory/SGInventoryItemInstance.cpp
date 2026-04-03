@@ -4,10 +4,18 @@
 #include "SG/Inventory/SGInventoryItemInstance.h"
 
 #include "SGInventoryItemDefinition.h"
+#include "Net/UnrealNetwork.h"
 
 USGInventoryItemInstance::USGInventoryItemInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+void USGInventoryItemInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, ItemDefinition);
 }
 
 const USGInventoryItemFragment* USGInventoryItemInstance::FindFragmentByClass(

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/PawnComponent.h"
+#include "Net/Serialization/FastArraySerializer.h"
 #include "SGEquipmentManagerComponent.generated.h"
 
 class USGEquipmentDefinition;
@@ -12,7 +13,7 @@ class USGEquipmentInstance;
 //////////////////////////////////////////////////////////////////////
 
 USTRUCT(BlueprintType)
-struct FSGAppliedEquipmentEntry
+struct FSGAppliedEquipmentEntry : public FFastArraySerializerItem
 {
 	GENERATED_BODY()
 
@@ -32,7 +33,7 @@ struct FSGAppliedEquipmentEntry
  * - FSGEquipmentList는 생성된 객체를 관리한다.
  */
 USTRUCT(BlueprintType)
-struct FSGEquipmentList
+struct FSGEquipmentList : public FFastArraySerializer
 {
 	GENERATED_BODY()
 
@@ -40,6 +41,18 @@ struct FSGEquipmentList
 		: OwnerComp(InOwnerComp)
 	{}
 
+public:
+	//~FFastArraySerializer contract
+	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
+	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
+	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
+	//~End of FFastArraySerializer contract
+
+	bool NetDeltaSerialize(FNetDeltaSerializeInfo& DeltaParms)
+	{
+		return FFastArraySerializer::FastArrayDeltaSerialize<FSGAppliedEquipmentEntry, FSGEquipmentList>(Entries, DeltaParms, *this);
+	}
+	
 	USGEquipmentInstance* AddEntry(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
 	void RemoveEntry(USGEquipmentInstance* Instance);
 	
@@ -47,8 +60,14 @@ struct FSGEquipmentList
 	UPROPERTY()
 	TArray<FSGAppliedEquipmentEntry> Entries;
 
-	UPROPERTY()
+	UPROPERTY(NotReplicated)
 	TObjectPtr<UActorComponent> OwnerComp;
+};
+
+template<>
+struct TStructOpsTypeTraits<FSGEquipmentList> : public TStructOpsTypeTraitsBase2<FSGEquipmentList>
+{
+	enum { WithNetDeltaSerializer = true };
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -62,11 +81,18 @@ class SG_API USGEquipmentManagerComponent : public UPawnComponent
 	GENERATED_BODY()
 public:
 	USGEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
+	virtual void ReadyForReplication() override;
+	
+	//~UObject interface
+	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	//~End of UObject interface
 
 
+	
 	USGEquipmentInstance* EquipItem(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
 	void UnequipItem(USGEquipmentInstance* ItemInstance);
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FSGEquipmentList EquipmentList;
 };

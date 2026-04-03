@@ -6,6 +6,7 @@
 #include "GameplayTagAssetInterface.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "SG/SGLogChannels.h"
 
 
 FSGCharacterPartHandle FSGCharacterPartList::AddEntry(const FSGCharacterPart& NewPart)
@@ -21,12 +22,13 @@ FSGCharacterPartHandle FSGCharacterPartList::AddEntry(const FSGCharacterPart& Ne
 		FSGAppliedCharacterPartEntry& NewEntry = Entries.AddDefaulted_GetRef();
 		NewEntry.Part = NewPart; // 메타 데이터
 		NewEntry.PartHandle = Result.PartHandle;
-
+ 
 		// NewEntry를 이용해서 실제 Actor를 생성하고,
 		// OwmerComp의 Owner Actor에 Actor끼리 RootComp로 Attach 시킨다.
 		if (SpawnActorForEntry(NewEntry))
 		{
 			OwnerComp->BroadcastChanged();
+			
 		}
 
 		MarkItemDirty(NewEntry);	
@@ -40,11 +42,18 @@ void FSGCharacterPartList::RemoveEntry(FSGCharacterPartHandle Handle)
 	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
 	{
 		FSGAppliedCharacterPartEntry& Entry = *EntryIt;
-
-		// 제거할 경우, Part Handle을 활용한다.
 		if (Entry.PartHandle == Handle.PartHandle)
 		{
-			DestroyActorForEntry(Entry);
+			const bool bDestroyedActor = DestroyActorForEntry(Entry);
+			EntryIt.RemoveCurrent();
+			MarkArrayDirty();
+
+			if (bDestroyedActor && ensure(OwnerComp))
+			{
+				OwnerComp->BroadcastChanged();
+			}
+
+			break;
 		}
 	}
 }
@@ -75,6 +84,17 @@ FGameplayTagContainer FSGCharacterPartList::CollectCombinedTags() const
 
 void FSGCharacterPartList::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)
 {
+	bool bDestroyedAnyActors = false;
+	for (int32 Index : RemovedIndices)
+	{
+		FSGAppliedCharacterPartEntry& Entry = Entries[Index];
+		bDestroyedAnyActors |= DestroyActorForEntry(Entry);
+	}
+
+	if (bDestroyedAnyActors && ensure(OwnerComp))
+	{
+		OwnerComp->BroadcastChanged();
+	}
 }
 
 void FSGCharacterPartList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
@@ -94,13 +114,34 @@ void FSGCharacterPartList::PostReplicatedAdd(const TArrayView<int32> AddedIndice
 
 void FSGCharacterPartList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
+	bool bChangedAnyActors = false;
+
+	// We don't support dealing with propagating changes, just destroy and recreate
+	for (int32 Index : ChangedIndices)
+	{
+		FSGAppliedCharacterPartEntry& Entry = Entries[Index];
+
+		bChangedAnyActors |= DestroyActorForEntry(Entry);
+		bChangedAnyActors |= SpawnActorForEntry(Entry);
+	}
+
+	if (bChangedAnyActors && ensure(OwnerComp))
+	{
+		OwnerComp->BroadcastChanged();
+	}
 }
 
 bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry)
 {
 	bool bCreatedAnyActor = false;
 
-	if (ensure(OwnerComp) && !OwnerComp->IsNetMode(NM_DedicatedServer))
+	if (!OwnerComp)
+	{
+		return bCreatedAnyActor;
+	}
+	
+	if (!OwnerComp->IsNetMode(NM_DedicatedServer))
+	//if (!OwnerComp->GetOwner()->HasAuthority())
 	{
 		// 전달된 AppliedCharacterPartEntry의 Part Class가 제대로 세팅되어 있다면
 		if (Entry.Part.PartClass != nullptr)
@@ -142,6 +183,9 @@ bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entr
 				// 실제 스폰한 Actor
 				Entry.SpawnedComp = PartComp;
 				bCreatedAnyActor = true;
+
+				UE_LOG(LogSG, Display, TEXT("[메시 장착] FSGCharacterPartList::SpawnActorForEntry() in %d return %d"),
+					OwnerComp->GetOwner()->HasAuthority(), bCreatedAnyActor);
 			}
 		}
 	}
@@ -149,13 +193,18 @@ bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entr
 	return bCreatedAnyActor;
 }
 
-void FSGCharacterPartList::DestroyActorForEntry(FSGAppliedCharacterPartEntry& Entry)
+bool FSGCharacterPartList::DestroyActorForEntry(FSGAppliedCharacterPartEntry& Entry)
 {
-	if (Entry.SpawnedComp)
+	bool bDestroyedAnyActors = false;
+
+	if (Entry.SpawnedComp != nullptr)
 	{
 		Entry.SpawnedComp->DestroyComponent();
 		Entry.SpawnedComp = nullptr;
+		bDestroyedAnyActors = true;
 	}
+
+	return bDestroyedAnyActors;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -171,7 +220,9 @@ void USGPawnComp_CharacterParts::OnRegister()
 	Super::OnRegister();
 
 	if (!IsTemplate())
+	{
 		CharacterPartList.OwnerComp = this;
+	}
 }
 
 void USGPawnComp_CharacterParts::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

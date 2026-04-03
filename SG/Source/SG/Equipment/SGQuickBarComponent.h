@@ -21,7 +21,8 @@ class SG_API USGQuickBarComponent : public UControllerComponent
 	
 public:
 	USGQuickBarComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
+	
 	/**
 	 * ControllerComponent interface
 	 */
@@ -35,17 +36,24 @@ public:
 	USGEquipmentManagerComponent* FindEquipmentManager() const;
 	void UnequipItemInSlot();
 	void EquipItemInSlot();
+
+
+	UFUNCTION()
+	void OnRep_Slots();
+
+	UFUNCTION()
+	void OnRep_ActiveSlotIndex();
 	
 	/** HUD QuickBar Slot 개수 */
 	UPROPERTY()
 	int32 NumSlots = 3;
 
 	/** HUD QuickBar에 장착된 Slot 리스트 */
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing=OnRep_Slots)
 	TArray<TObjectPtr<USGInventoryItemInstance>> Slots;
 
 	/** 현재 활성화된 Slot Index (딱 하나의 Slot이 활성화됨) */
-	UPROPERTY()
+	UPROPERTY(ReplicatedUsing=OnRep_ActiveSlotIndex)
 	int32 ActiveSlotIndex = -1;
 
 	/** 현재 장착한 장비 정보 */

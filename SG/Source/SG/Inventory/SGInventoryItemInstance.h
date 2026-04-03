@@ -18,7 +18,12 @@ class SG_API USGInventoryItemInstance : public UObject
 
 public:
 	USGInventoryItemInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 
+	//~UObject interface
+	virtual bool IsSupportedForNetworking() const override { return true; }
+	//~End of UObject interface
+	
 	const USGInventoryItemFragment* FindFragmentByClass(TSubclassOf<USGInventoryItemFragment> FragmentClass) const;
 
 	template <typename ResultClass>
@@ -31,6 +36,6 @@ public:
 	 * Inventory Item의 인스턴스에는 무엇으로 정의되어 있는지
 	 * 메타 클래스인 LccInventoryItemDefinition을 들고 있다.
 	 */
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TSubclassOf<USGInventoryItemDefinition> ItemDefinition;
 };

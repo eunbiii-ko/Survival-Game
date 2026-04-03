@@ -3,6 +3,8 @@
 
 #include "SG/Cosmetics/SGControllerComp_CharacterParts.h"
 #include "SGPawnComp_CharacterParts.h"
+#include "SG/SGLogChannels.h"
+#include "SG/GameModes/SGExperienceManagerComponent.h"
 
 USGControllerComp_CharacterParts::USGControllerComp_CharacterParts(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -19,6 +21,13 @@ void USGControllerComp_CharacterParts::BeginPlay()
 		{
 			OwningController->OnPossessedPawnChanged.AddDynamic(
 				this, &ThisClass::OnPossessedPawnChanged);
+		}
+
+		AGameStateBase* GameState = GetWorld()->GetGameState();
+		if (USGExperienceManagerComponent* ExpComp = GameState->FindComponentByClass<USGExperienceManagerComponent>())
+		{
+			ExpComp->CallOrRegister_OnExperienceLoaded(
+				FOnSGExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
 		}
 	}
 }
@@ -78,7 +87,7 @@ void USGControllerComp_CharacterParts::OnPossessedPawnChanged(APawn* OldPawn, AP
 	{
 		for (FSGControllerCharacterPartEntry& Entry : CharacterParts)
 		{
-			//OldCustomizer->RemoveCharacterPart(Entry.Handle);
+			OldCustomizer->RemoveCharacterPart(Entry.Handle);
 			Entry.Handle.Reset();
 		}
 	}
@@ -89,8 +98,25 @@ void USGControllerComp_CharacterParts::OnPossessedPawnChanged(APawn* OldPawn, AP
 	{
 		for (FSGControllerCharacterPartEntry& Entry : CharacterParts)
 		{
-			check(!Entry.Handle.IsValid());
-			Entry.Handle = NewCustomizer->AddCharacterPart(Entry.Part);
+			if (!Entry.Handle.IsValid())
+			{
+				Entry.Handle = NewCustomizer->AddCharacterPart(Entry.Part);
+			}
+		}
+	}
+
+	UE_LOG(LogSG, Display, TEXT("[메시 장착] USGControllerComp_CharacterParts::OnPossessedPawnChanged() in %d"), NewPawn->HasAuthority());
+}
+
+void USGControllerComp_CharacterParts::OnExperienceLoaded(const USGExperienceDefinition* LoadedExperienceDefinition)
+{
+	if (AController* OwningController = GetController<AController>())
+	{
+		OwningController->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::OnPossessedPawnChanged);
+
+		if (APawn* ControlledPawn = GetPawn<APawn>())
+		{
+			OnPossessedPawnChanged(nullptr, ControlledPawn);
 		}
 	}
 }

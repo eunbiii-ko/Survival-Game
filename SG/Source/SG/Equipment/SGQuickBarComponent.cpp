@@ -4,6 +4,7 @@
 #include "SG/Equipment/SGQuickBarComponent.h"
 
 #include "SGEquipmentDefinition.h"
+#include "Net/UnrealNetwork.h"
 #include "SG/Equipment/SGEquipmentManagerComponent.h"
 #include "SG/Inventory/SGInventoryItemFragment_EquippableItem.h"
 #include "SG/Inventory/SGInventoryItemInstance.h"
@@ -12,6 +13,15 @@
 USGQuickBarComponent::USGQuickBarComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	SetIsReplicatedByDefault(true);
+}
+
+void USGQuickBarComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, Slots);
+	DOREPLIFETIME(ThisClass, ActiveSlotIndex);
 }
 
 void USGQuickBarComponent::BeginPlay()
@@ -32,6 +42,7 @@ void USGQuickBarComponent::AddItemToSlot(int32 SlotIndex, USGInventoryItemInstan
 		{
 			// 동적 추가가 아니라 바로 넣는다. 
 			Slots[SlotIndex] = Item;
+			OnRep_Slots();
 		}
 	}
 }
@@ -43,6 +54,7 @@ void USGQuickBarComponent::SetActiveSlotIndex(int32 NewIndex)
 		UnequipItemInSlot();
 		ActiveSlotIndex = NewIndex;
 		EquipItemInSlot();
+		OnRep_ActiveSlotIndex();
 	}
 }
 
@@ -107,4 +119,12 @@ void USGQuickBarComponent::EquipItemInSlot()
 			}
 		}
 	}
+}
+
+void USGQuickBarComponent::OnRep_Slots()
+{
+}
+
+void USGQuickBarComponent::OnRep_ActiveSlotIndex()
+{
 }

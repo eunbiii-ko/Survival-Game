@@ -4,6 +4,36 @@
 #include "SG/Equipment/SGEquipmentManagerComponent.h"
 #include "SGEquipmentDefinition.h"
 #include "SGEquipmentInstance.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
+
+void FSGEquipmentList::PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize)
+{
+	for (int32 Index : RemovedIndices)
+	{
+		const FSGAppliedEquipmentEntry& Entry = Entries[Index];
+		if (Entry.Instance != nullptr)
+		{
+			Entry.Instance->OnUnequipped();
+		}
+	}
+}
+
+void FSGEquipmentList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
+{
+	for (int32 Index : AddedIndices)
+	{
+		const FSGAppliedEquipmentEntry& Entry = Entries[Index];
+		if (Entry.Instance != nullptr)
+		{
+			Entry.Instance->OnEquipped();
+		}
+	}
+}
+
+void FSGEquipmentList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
+{
+}
 
 USGEquipmentInstance* FSGEquipmentList::AddEntry(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition)
 {
@@ -31,6 +61,8 @@ USGEquipmentInstance* FSGEquipmentList::AddEntry(TSubclassOf<USGEquipmentDefinit
 	// ActorsToSpawn을 통해, Actor들을 인스턴스화한다.
 	Result->SpawnEquipmentActors(EquipmentCDO->ActorsToSpawn);
 
+	MarkItemDirty(NewEntry);
+	
 	return Result;
 }
 
@@ -45,6 +77,8 @@ void FSGEquipmentList::RemoveEntry(USGEquipmentInstance* Instance)
 			// Actor 제거 및 iterator를 통해 안전하게 Array에서 삭제
 			Instance->DestroyEquipmentActors();
 			EntryIt.RemoveCurrent();
+
+			MarkArrayDirty();
 		}
 	}
 }
@@ -54,6 +88,52 @@ void FSGEquipmentList::RemoveEntry(USGEquipmentInstance* Instance)
 USGEquipmentManagerComponent::USGEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer), EquipmentList(this)
 {
+	SetIsReplicatedByDefault(true);
+	bWantsInitializeComponent = true;
+}
+
+void USGEquipmentManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, EquipmentList);
+}
+
+void USGEquipmentManagerComponent::ReadyForReplication()
+{
+	Super::ReadyForReplication();
+
+	// Register existing LyraEquipmentInstances
+	if (IsUsingRegisteredSubObjectList())
+	{
+		for (const FSGAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+		{
+			USGEquipmentInstance* Instance = Entry.Instance;
+
+			if (IsValid(Instance))
+			{
+				AddReplicatedSubObject(Instance);
+			}
+		}
+	}
+}
+
+bool USGEquipmentManagerComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
+                                                       FReplicationFlags* RepFlags)
+{
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+
+	for (FSGAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+	{
+		USGEquipmentInstance* Instance = Entry.Instance;
+
+		if (IsValid(Instance))
+		{
+			WroteSomething |= Channel->ReplicateSubobject(Instance, *Bunch, *RepFlags);
+		}
+	}
+
+	return WroteSomething;
 }
 
 USGEquipmentInstance* USGEquipmentManagerComponent::EquipItem(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition)
@@ -67,6 +147,11 @@ USGEquipmentInstance* USGEquipmentManagerComponent::EquipItem(TSubclassOf<USGEqu
 		{
 			// BP의 Evnet 노드를 호출한다.
 			Result->OnEquipped();
+
+			if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
+			{
+				AddReplicatedSubObject(Result);
+			}
 		}
 	}
 
@@ -77,6 +162,11 @@ void USGEquipmentManagerComponent::UnequipItem(USGEquipmentInstance* ItemInstanc
 {
 	if (ItemInstance)
 	{
+		if (IsUsingRegisteredSubObjectList())
+		{
+			RemoveReplicatedSubObject(ItemInstance);
+		}
+		
 		// BP의 Evnet 노드를 호출한다.
 		ItemInstance->OnUnequipped();
 

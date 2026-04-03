@@ -71,7 +71,7 @@ public:
 	
 private:
 	bool SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry);
-	void DestroyActorForEntry(FSGAppliedCharacterPartEntry& Entry);
+	bool DestroyActorForEntry(FSGAppliedCharacterPartEntry& Entry);
 	
 public:
 	/** 현재 인스턴스화된 Character Part */
@@ -99,7 +99,7 @@ struct TStructOpsTypeTraits<FSGCharacterPartList> : public TStructOpsTypeTraitsB
 /**
  * 
  */
-UCLASS()
+UCLASS(meta=(BlueprintSpawnableComponent))
 class SG_API USGPawnComp_CharacterParts : public UPawnComponent
 {
 	GENERATED_BODY()

@@ -5,10 +5,34 @@
 
 #include "SGEquipmentDefinition.h"
 #include "GameFramework/Character.h"
+#include "Iris/ReplicationSystem/ReplicationFragmentUtil.h"
+#include "Net/UnrealNetwork.h"
+#include "SG/SGLogChannels.h"
 
 USGEquipmentInstance::USGEquipmentInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	
+}
+
+void USGEquipmentInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	UObject::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, Instigator);
+	DOREPLIFETIME(ThisClass, SpawnedActors);
+}
+
+UWorld* USGEquipmentInstance::GetWorld() const
+{
+	if (APawn* OwningPawn = GetPawn())
+	{
+		return OwningPawn->GetWorld();
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 APawn* USGEquipmentInstance::GetPawn() const
@@ -46,6 +70,8 @@ void USGEquipmentInstance::SpawnEquipmentActors(const TArray<FSGEquipmentActorTo
 				SpawnInfo.AttachSocket);
 
 			SpawnedActors.Add(NewActor);
+
+			UE_LOG(LogSG, Display, TEXT("[무기 장착] USGEquipmentInstance::SpawnEquipmentActors() in %d"), OwningPawn->HasAuthority());	
 		}
 	}
 }
@@ -70,4 +96,8 @@ void USGEquipmentInstance::OnEquipped()
 void USGEquipmentInstance::OnUnequipped()
 {
 	K2_OnUnequipped();
+}
+
+void USGEquipmentInstance::OnRep_Instigator()
+{
 }

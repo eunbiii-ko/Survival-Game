@@ -7,6 +7,7 @@
 #include "SG/Cosmetics/SGCharacterPartTypes.h"
 #include "SGControllerComp_CharacterParts.generated.h"
 
+class USGExperienceDefinition;
 class USGPawnComp_CharacterParts;
 
 /** ControllerComp가 소유하는 Character Parts */
@@ -51,6 +52,8 @@ private:
 	USGPawnComp_CharacterParts* GetPawnCustomizer() const;
 	UFUNCTION()
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
+	UFUNCTION()
+	void OnExperienceLoaded(const USGExperienceDefinition* LoadedExperienceDefinition);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
