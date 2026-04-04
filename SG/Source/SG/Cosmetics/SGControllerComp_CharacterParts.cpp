@@ -41,6 +41,8 @@ void USGControllerComp_CharacterParts::EndPlay(const EEndPlayReason::Type EndPla
 
 void USGControllerComp_CharacterParts::AddCharacterPart(const FSGCharacterPart& NewPart)
 {
+	UE_LOG(LogSG, Display, TEXT("[메시 장착] USGControllerComp_CharacterParts::AddCharacterPart()"));
+	
 	AddCharacterPartInternal(NewPart);
 }
 

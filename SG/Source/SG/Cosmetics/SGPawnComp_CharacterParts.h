@@ -12,6 +12,7 @@
 class USkeletalMeshComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSGSpawnedCharacterPartsChanged, USGPawnComp_CharacterParts*, ComponentWithChangedParts);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSGSpawnedCharacterPart);
 
 /** 인스턴스화된 Character Part 단위 */
 USTRUCT()
@@ -46,7 +47,8 @@ struct FSGCharacterPartList : public FFastArraySerializer
 
 	FSGCharacterPartList()
 		: OwnerComp(nullptr)
-	{}
+	{
+	}
 
 	FSGCharacterPartList(USGPawnComp_CharacterParts* InOwnerComp)
 		: OwnerComp(InOwnerComp)
@@ -68,6 +70,8 @@ public:
 	{
 		return FFastArraySerializer::FastArrayDeltaSerialize<FSGAppliedCharacterPartEntry, FSGCharacterPartList>(Entries, DeltaParms, *this);
 	}
+
+
 	
 private:
 	bool SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry);
@@ -122,10 +126,30 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category=Cosmetics, BlueprintCallable)
 	FSGSpawnedCharacterPartsChanged OnCharacterPartsChanged;
+
+	/** BlueprintAssignable은 BP상에서 할당 가능한 변수로 정의한다. */
+	UPROPERTY(BlueprintAssignable)
+	FSGSpawnedCharacterPart OnReadyForEquipWeapon;
+
+
+	// 별도의 BP 구현 함수
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void BP_OnEquipWeapon();
+
+	
+private:
+	// 델리게이트 핸들러 (클라이언트에서 호출됨)
+	UFUNCTION()
+	void OnReadyForEquipWeaponHandler();
+
+	// Server RPC (서버에서 실행됨)
+	UFUNCTION(Server, Reliable)
+	void ServerStartEquipWeapon();
+	
 	
 private:
 	/** 인스턴스화된 Character Parts */
-	UPROPERTY(Replicated, Transient)
+	UPROPERTY(Replicated, Transient, meta = (AllowPrivateAccess = true))
 	FSGCharacterPartList CharacterPartList;
 
 	/** 애니메이션 적용을 위한 메시와 연결고리 */

@@ -139,6 +139,8 @@ bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entr
 	{
 		return bCreatedAnyActor;
 	}
+	UE_LOG(LogSG, Display, TEXT("[메시 장착] FSGCharacterPartList::SpawnActorForEntry() in %d netmode %d return %d"),
+					OwnerComp->GetOwner()->HasAuthority(), (int32)OwnerComp->GetNetMode(), bCreatedAnyActor);
 	
 	if (!OwnerComp->IsNetMode(NM_DedicatedServer))
 	//if (!OwnerComp->GetOwner()->HasAuthority())
@@ -183,7 +185,8 @@ bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entr
 				// 실제 스폰한 Actor
 				Entry.SpawnedComp = PartComp;
 				bCreatedAnyActor = true;
-
+				OwnerComp->OnReadyForEquipWeapon.Broadcast();
+				
 				UE_LOG(LogSG, Display, TEXT("[메시 장착] FSGCharacterPartList::SpawnActorForEntry() in %d return %d"),
 					OwnerComp->GetOwner()->HasAuthority(), bCreatedAnyActor);
 			}
@@ -223,6 +226,8 @@ void USGPawnComp_CharacterParts::OnRegister()
 	{
 		CharacterPartList.OwnerComp = this;
 	}
+
+	OnReadyForEquipWeapon.AddDynamic(this, &ThisClass::OnReadyForEquipWeaponHandler);
 }
 
 void USGPawnComp_CharacterParts::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -317,4 +322,19 @@ FGameplayTagContainer USGPawnComp_CharacterParts::GetCombinedTags(FGameplayTag R
 		// 필터링할 GameplayTag가 없으면 그냥 반환한다.
 		return Result;
 	}
+}
+
+void USGPawnComp_CharacterParts::OnReadyForEquipWeaponHandler()
+{
+	ServerStartEquipWeapon();
+	
+}
+
+void USGPawnComp_CharacterParts::ServerStartEquipWeapon_Implementation()
+{
+	BP_OnEquipWeapon();
+}
+
+void USGPawnComp_CharacterParts::BP_OnEquipWeapon_Implementation()
+{
 }

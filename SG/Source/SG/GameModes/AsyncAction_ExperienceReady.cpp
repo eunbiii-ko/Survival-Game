@@ -104,6 +104,4 @@ void UAsyncAction_ExperienceReady::Step4_BroadcastReady()
 	OnReady.Broadcast();
 	UE_LOG(LogSG, Display, TEXT("[BC] UAsyncAction_ExperienceReady::Step4_BroadcastReady()"));
 	SetReadyToDestroy();
-
-	
 }
