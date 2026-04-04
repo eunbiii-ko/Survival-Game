@@ -30,7 +30,6 @@ public:
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Equipment", meta = (DisplayName = "OnEquipped"))
 	void K2_OnEquipped();
-
 	UFUNCTION(BlueprintImplementableEvent, Category = "Equipment", meta = (DisplayName = "OnEquipped"))
 	void K2_OnUnequipped();
 
@@ -45,6 +44,15 @@ public:
 	 */
 	virtual void OnEquipped();
 	virtual void OnUnequipped();
+
+	/**
+	 * DeterminesOutputType은 C++ 정의에는 APawn* 을 반환하지만,
+	 * BP에서는 PawnType에 따라 OutputType이 결정되도록
+	 * Redirect(PawnType에 맞게 변환)한다.
+	 */
+	UFUNCTION(BlueprintPure, Category = "Equipment",
+		meta = (DeterminesOutputType = PawnType))
+	APawn* GetTypedPawn(TSubclassOf<APawn> PawnType) const;
 
 private:
 	UFUNCTION()

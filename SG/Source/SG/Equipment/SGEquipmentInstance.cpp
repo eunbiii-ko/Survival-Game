@@ -98,6 +98,20 @@ void USGEquipmentInstance::OnUnequipped()
 	K2_OnUnequipped();
 }
 
+APawn* USGEquipmentInstance::GetTypedPawn(TSubclassOf<APawn> PawnType) const
+{
+	APawn* Result = nullptr;
+	if (UClass* ActualPawnType = PawnType)
+	{
+		// 현재 Pawn이 PawnType으로 변환이 가능한지 확인한다. 
+		if (GetOuter()->IsA(ActualPawnType))
+		{
+			Result = Cast<APawn>(GetOuter());
+		}
+	}
+	return Result;
+}
+
 void USGEquipmentInstance::OnRep_Instigator()
 {
 }
