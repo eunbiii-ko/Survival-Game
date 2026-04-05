@@ -60,6 +60,9 @@ struct FSGAnimLayerSelectionSet
 {
 	GENERATED_BODY()
 
+	/** CosmeticTags를 기반하여 적절한 AnimLayer를 반환한다. */
+	TSubclassOf<UAnimInstance> SelectBestLayer(const FGameplayTagContainer& CosmeticTags) const;
+	
 	/** Animation Rule을 가진 LayerRules */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FSGAnimLayerSelectionEntry> LayerRules;

@@ -16,3 +16,17 @@ USkeletalMesh* FSGAnimBodyStyleSelectionSet::SelectBestBodyStyle(const FGameplay
 
 	return DefaultMesh;
 }
+
+TSubclassOf<UAnimInstance> FSGAnimLayerSelectionSet::SelectBestLayer(const FGameplayTagContainer& CosmeticTags) const
+{
+	// LayerRules 순회하며, CosmeticTags 요구 조건에 맞는 LayerRule을 찾아 AnimInstance를 반환한다.
+	for (const FSGAnimLayerSelectionEntry& Rule : LayerRules)
+	{
+		if ((Rule.Layer) && CosmeticTags.HasAll(Rule.RequiredTags))
+		{
+			return Rule.Layer;
+		}
+	}
+
+	return DefaultLayer;
+}
