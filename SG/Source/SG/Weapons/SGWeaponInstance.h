@@ -18,6 +18,10 @@ class SG_API USGWeaponInstance : public USGEquipmentInstance
 public:
 	USGWeaponInstance(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	/** Weapon에 적용할 AnimLayer를 선택하여 반환한다. */
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Animation")
+	TSubclassOf<UAnimInstance> PickBestAnimLayer(bool bEquipped, const FGameplayTagContainer& CosmeticTags) const;
+	
 	/** Weapon의 Equip/UnEquip에 대한 Animation Set 정보를 저장한다. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
 	FSGAnimLayerSelectionSet EquippedAnimSet;
