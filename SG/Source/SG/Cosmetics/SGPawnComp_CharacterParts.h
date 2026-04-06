@@ -121,7 +121,7 @@ public:
 	USkeletalMeshComponent* GetParentMeshComponent() const;
 	USceneComponent* GetSceneComponentToAttachTo() const;
 
-
+	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Cosmetics")
 	FGameplayTagContainer GetCombinedTags(FGameplayTag RequiredPrefix) const;
 
 	UPROPERTY(BlueprintAssignable, Category=Cosmetics, BlueprintCallable)
