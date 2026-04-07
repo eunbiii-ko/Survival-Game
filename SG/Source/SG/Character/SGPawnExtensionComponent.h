@@ -51,6 +51,8 @@ public:
 	/** AbilitySystemComponent의 AvatarActor 대상 초기화/해제 */
 	void InitializeAbilitySystem(USGAbilitySystemComponent* InASC, AActor* InOwnerActor);
 	void UninitalizeAbilitySystem();
+
+	USGAbilitySystemComponent* GetSGAbilitySystemComponent() const { return AbilitySystemComp; }
 	
 protected:
 	virtual void OnRegister() override final;
