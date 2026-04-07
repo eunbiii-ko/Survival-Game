@@ -6,6 +6,7 @@
 #include "Net/UnrealNetwork.h"
 #include "SG/SGGameplayTags.h"
 #include "SG/SGLogChannels.h"
+#include "SG/AbilitySystem/SGAbilitySystemComponent.h"
 
 const FName USGPawnExtensionComponent::NAME_ActorFeatureName("PawnExtension");
 
@@ -131,6 +132,40 @@ void USGPawnExtensionComponent::HandleControllerChanged()
 void USGPawnExtensionComponent::HandlePlayerStateReplicated()
 {
 	CheckDefaultInitialization();
+}
+
+void USGPawnExtensionComponent::InitializeAbilitySystem(USGAbilitySystemComponent* InASC, AActor* InOwnerActor)
+{
+	check(InASC && InOwnerActor);
+
+	if (AbilitySystemComp == InASC)
+	{
+		return;
+	}
+
+	if (AbilitySystemComp)
+	{
+		UninitalizeAbilitySystem();
+	}
+
+	APawn* Pawn = GetPawnChecked<APawn>();
+	AActor* ExistingActor = InASC->GetAvatarActor();
+	check(!ExistingActor);
+
+	// ASC를 업데이트하고, InitializeAbilityActorInfo()를 Pawn과 같이 호출하여
+	// AvatarActor를 Pawn으로 업데이트한다.
+	AbilitySystemComp = InASC;
+	AbilitySystemComp->InitAbilityActorInfo(InOwnerActor, Pawn);
+}
+
+void USGPawnExtensionComponent::UninitalizeAbilitySystem()
+{
+	if (!AbilitySystemComp)
+	{
+		return;
+	}
+
+	AbilitySystemComp = nullptr;
 }
 
 void USGPawnExtensionComponent::OnRegister()

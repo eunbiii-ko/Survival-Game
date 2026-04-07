@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "SGPlayerState.generated.h"
 
+class USGAbilitySystemComponent;
 class USGPawnData;
 class USGExperienceDefinition;
 /**
@@ -17,6 +18,9 @@ class SG_API ASGPlayerState : public APlayerState
 	GENERATED_BODY()
 
 public:
+	ASGPlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+
 	/**
 	 * Actor's Interface
 	 */
@@ -30,6 +34,7 @@ public:
 	template <class T>
 	const T* GetPawnData() const { return Cast<T>(PawnData); }
 	void SetPawnData(const USGPawnData* InPawnData);
+	USGAbilitySystemComponent* GetAbilitySystemComponent() const { return AbilitySystemComp; }
 
 private:
 	/**
@@ -37,6 +42,9 @@ private:
 	 */
 	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
 	TObjectPtr<const USGPawnData> PawnData;
+
+	UPROPERTY()
+	TObjectPtr<USGAbilitySystemComponent> AbilitySystemComp;
 
 
 protected:

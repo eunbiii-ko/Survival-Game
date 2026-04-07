@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "SGPawnData.generated.h"
 
+class USGAbilitySet;
 class USGInputConfig;
 class USGCameraMode;
 /**
@@ -30,4 +31,8 @@ public:
 	/** Pawn이 사용할 Input */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | InputConfig")
 	TObjectPtr<USGInputConfig> InputConfig;
+
+	/** Pawn의 Ability System에 허용할 Ability Set */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "SG | Abilities")
+	TArray<TObjectPtr<USGAbilitySet>> AbilitySets;
 };

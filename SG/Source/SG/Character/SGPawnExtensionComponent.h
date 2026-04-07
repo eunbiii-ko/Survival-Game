@@ -8,6 +8,7 @@
 #include "SG/Character/SGPawnData.h"
 #include "SGPawnExtensionComponent.generated.h"
 
+class USGAbilitySystemComponent;
 class USGPawnData;
 /**
  * 컴포넌트들의 초기화를 담당한다.
@@ -47,6 +48,9 @@ public:
     void HandleControllerChanged();
 	/** PlayerState가 복제됐을 때, Pawn을 소유한 쪽에서 호출된다. */
 	void HandlePlayerStateReplicated();
+	/** AbilitySystemComponent의 AvatarActor 대상 초기화/해제 */
+	void InitializeAbilitySystem(USGAbilitySystemComponent* InASC, AActor* InOwnerActor);
+	void UninitalizeAbilitySystem();
 	
 protected:
 	virtual void OnRegister() override final;
@@ -61,6 +65,9 @@ protected:
 	UPROPERTY(EditInstanceOnly, ReplicatedUsing = OnRep_PawnData, Category = "SG | Pawn")
 	TObjectPtr<const USGPawnData> PawnData;
 
+	/** ASC를 캐싱해둔다. */
+	UPROPERTY()
+	TObjectPtr<USGAbilitySystemComponent> AbilitySystemComp;
 };
 
 

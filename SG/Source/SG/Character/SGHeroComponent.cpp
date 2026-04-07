@@ -162,20 +162,20 @@ void USGHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Man
 	if (CurrentState == SGGameplayTags::InitState_DataAvailable && DesiredState == SGGameplayTags::InitState_DataInitialized)
 	{
 		APawn* Pawn = GetPawn<APawn>();
-		ASGPlayerState* LccPs = GetPlayerState<ASGPlayerState>();
-		if (!ensure(Pawn && LccPs))
+		ASGPlayerState* SGPS = GetPlayerState<ASGPlayerState>();
+		if (!ensure(Pawn && SGPS))
 		{
 			return;
 		}
-
-		// todo
-		//  - Input과 Camera에 대한 핸들링
 		
 		const bool bIIsLocallyControlled = Pawn->IsLocallyControlled();
 		const USGPawnData* PawnData = nullptr;
 		if (USGPawnExtensionComponent* PawnExtComp = USGPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
 		{
 			PawnData = PawnExtComp->GetPawnData<USGPawnData>();
+			// DataInitialized 단계까지 오면, Pawn이 Controller에 Possess되어 준비된 상태이다.
+			// -> 따라서 InitAbilityActorInfo() 호출로 AvatarActor 재설정이 필요하다. 
+			PawnExtComp->InitializeAbilitySystem(SGPS->GetAbilitySystemComponent(), SGPS);
 		}
 	}
 }
