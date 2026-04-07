@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/PawnComponent.h"
 #include "Net/Serialization/FastArraySerializer.h"
+#include "SG/AbilitySystem/SGAbilitySet.h"
 #include "SGEquipmentManagerComponent.generated.h"
 
 class USGEquipmentDefinition;
@@ -24,6 +25,10 @@ struct FSGAppliedEquipmentEntry : public FFastArraySerializerItem
 	/** EquipmentDefinition을 통해 생성된 인스턴스 */
 	UPROPERTY()
 	TObjectPtr<USGEquipmentInstance> Instance = nullptr;
+
+	/** 무기에 할당된 허용가능한 GameplayAbility */
+	UPROPERTY()
+	FSGAbilitySet_GrantedHandles GrantedHandles;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -55,6 +60,7 @@ public:
 	
 	USGEquipmentInstance* AddEntry(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
 	void RemoveEntry(USGEquipmentInstance* Instance);
+	USGAbilitySystemComponent* GetAbilitySystemComponent() const;
 	
 	/** 장착물에 대한 관리 리스트 */
 	UPROPERTY()

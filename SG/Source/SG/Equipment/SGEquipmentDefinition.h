@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "SGEquipmentDefinition.generated.h"
 
+class USGAbilitySet;
 class USGEquipmentInstance;
 
 //////////////////////////////////////////////////////////////////////
@@ -47,4 +48,8 @@ public:
 	/** 해당 장착 아이템을 사용하면, 어떤 Actor가 Spawn되는지 정보를 담고 있다. */
 	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
 	TArray<FSGEquipmentActorToSpawn> ActorsToSpawn;
+
+	/** 장착을 통해 부여 가능한 Ability Set */
+	UPROPERTY(EditDefaultsOnly, Category = "Equipment")
+	TArray<TObjectPtr<USGAbilitySet>> AbilitySetsToGrant;
 };

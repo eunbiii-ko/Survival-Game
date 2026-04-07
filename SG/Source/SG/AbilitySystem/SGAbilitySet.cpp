@@ -8,10 +8,27 @@
 
 void FSGAbilitySet_GrantedHandles::AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle)
 {
+	if (Handle.IsValid())
+	{
+		AbilitySpecHandles.Add(Handle);
+	}
 }
 
 void FSGAbilitySet_GrantedHandles::TakeFromAbilitySystem(USGAbilitySystemComponent* SGASC)
 {
+	if (!SGASC->IsOwnerActorAuthoritative())
+	{
+		return;
+	}
+
+	for (const FGameplayAbilitySpecHandle& Handle : AbilitySpecHandles)
+	{
+		if (Handle.IsValid())
+		{
+			// ActivatableAbilities에서 제거한다.
+			SGASC->ClearAbility(Handle);
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
