@@ -34,7 +34,7 @@ public:
 	template <class T>
 	const T* GetPawnData() const { return Cast<T>(PawnData); }
 	void SetPawnData(const USGPawnData* InPawnData);
-	USGAbilitySystemComponent* GetAbilitySystemComponent() const { return AbilitySystemComp; }
+	USGAbilitySystemComponent* GetSGAbilitySystemComponent() const { return AbilitySystemComp; }
 
 private:
 	/**

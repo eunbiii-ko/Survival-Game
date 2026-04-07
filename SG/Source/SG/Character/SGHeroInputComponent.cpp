@@ -12,6 +12,7 @@
 #include "EnhancedInputSubsystemInterface.h"
 #include "PlayerMappableInputConfig.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "SG/AbilitySystem/SGAbilitySystemComponent.h"
 
 const FName USGHeroInputComponent::NAME_ActorFeatureName("HeroInput");
 const FName USGHeroInputComponent::NAME_BindInputsNow("BindInputsNow");
@@ -106,6 +107,11 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 					// -> 바인딩 후, InputEvent에 따라 멤버 함수가 트리거된다.
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, false);
+
+					TArray<uint32> BindHnaldes;
+					SGIC->BindAbilityActions(InputConfig, this,
+						&ThisClass::Input_AbilityInputTagPressed,
+						&ThisClass::Input_AbilityInputTagReleased, BindHnaldes);
 				}
 			}
 		}
@@ -162,5 +168,33 @@ void USGHeroInputComponent::Input_LookMouse(const FInputActionValue& InputAction
 	{
 		double AimInversionValue = -Value.Y;
 		Pawn->AddControllerPitchInput(AimInversionValue);
+	}
+}
+
+void USGHeroInputComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if (const APawn* Pawn = GetPawn<APawn>())
+	{
+		if (const USGPawnExtensionComponent* PawnExtComp = USGPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+		{
+			if (USGAbilitySystemComponent* SGASC = PawnExtComp->GetSGAbilitySystemComponent())
+			{
+				SGASC->AbilityInputTagPressed(InputTag);
+			}
+		}
+	}
+}
+
+void USGHeroInputComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if (const APawn* Pawn = GetPawn<APawn>())
+	{
+		if (const USGPawnExtensionComponent* PawnExtComp = USGPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+		{
+			if (USGAbilitySystemComponent* SGASC = PawnExtComp->GetSGAbilitySystemComponent())
+			{
+				SGASC->AbilityInputTagReleased(InputTag);
+			}
+		}
 	}
 }

@@ -26,7 +26,7 @@ public:
 		ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound);
 
 	template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-	void BindNativeAction(const USGInputConfig* InputConfig, UserClass* Object,
+	void BindAbilityActions(const USGInputConfig* InputConfig, UserClass* Object,
 		PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
 		TArray<uint32>& BindHandles);
 };
@@ -46,7 +46,7 @@ void USGEnhancedInputComponent::BindNativeAction(const USGInputConfig* InputConf
 }
 
 template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-void USGEnhancedInputComponent::BindNativeAction(const USGInputConfig* InputConfig, UserClass* Object,
+void USGEnhancedInputComponent::BindAbilityActions(const USGInputConfig* InputConfig, UserClass* Object,
 	PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles)
 {
 	check(InputConfig);

@@ -7,6 +7,10 @@
 #include "GameFramework/PlayerController.h"
 #include "SGPlayerController.generated.h"
 
+class USGAbilitySystemComponent;
+class ASGPlayerState;
+
+
 /**
  * 
  */
@@ -20,4 +24,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void ServerRequestMapTravel(const FString& TravelURL);
+
+	//~ Begin APlayerController interface
+	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override final;
+	//~ End APlayerController interface
+
+	//~ Begin member methods
+	ASGPlayerState* GetSGPlayerState() const;
+	USGAbilitySystemComponent* GetSGAbilitySystemComponent() const;
+	//~ End member methods
 };

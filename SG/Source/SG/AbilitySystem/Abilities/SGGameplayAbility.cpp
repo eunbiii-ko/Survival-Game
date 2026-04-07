@@ -6,4 +6,5 @@
 USGGameplayAbility::USGGameplayAbility(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	ActivationPolicy = ESGAbilityActivationPolicy::OnInputTriggered;
 }
