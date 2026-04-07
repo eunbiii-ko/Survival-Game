@@ -13,6 +13,8 @@ public class SG : ModuleRules
 			"Core", "CoreUObject", "Engine",
 			// GAS
 			"GameplayTags",
+			"GameplayTasks",
+			"GameplayAbilities",
 			// Game Features
 			"ModularGameplay",
 			"GameFeatures",
