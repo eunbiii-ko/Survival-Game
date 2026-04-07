@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ModularCharacter.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "SGCharacter.generated.h"
 
@@ -11,7 +12,7 @@ class USGCameraComponent;
 class USGPawnExtensionComponent;
 
 UCLASS()
-class SG_API ASGCharacter : public AModularCharacter
+class SG_API ASGCharacter : public AModularCharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -20,6 +21,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PossessedBy(AController* NewController) override;
+
+	//~ Begin IAbilitySystemInterface 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	//~ End IAbilitySystemInterface 
 	
 protected:
 	virtual void BeginPlay() override;

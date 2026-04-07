@@ -3,6 +3,7 @@
 
 #include "SG/Character/SGCharacter.h"
 
+#include "SG/AbilitySystem/SGAbilitySystemComponent.h"
 #include "SG/Camera/SGCameraComponent.h"
 #include "SG/Character/SGPawnExtensionComponent.h"
 
@@ -57,5 +58,10 @@ void ASGCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 	// 서버에서 호출된다.
 	PawnExtComp->HandleControllerChanged();
+}
+
+UAbilitySystemComponent* ASGCharacter::GetAbilitySystemComponent() const
+{
+	return PawnExtComp->GetSGAbilitySystemComponent();
 }
 
