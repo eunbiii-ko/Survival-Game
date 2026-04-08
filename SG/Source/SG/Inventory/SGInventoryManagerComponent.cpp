@@ -41,6 +41,19 @@ USGInventoryItemInstance* FSGInventoryList::AddEntry(TSubclassOf<USGInventoryIte
 	return Result;
 }
 
+void FSGInventoryList::RemoveEntry(USGInventoryItemInstance* Instance)
+{
+	for (auto EntryIt = Entries.CreateIterator(); EntryIt; ++EntryIt)
+	{
+		FSGInventoryEntry& Entry = *EntryIt;
+		if (Entry.Instance == Instance)
+		{
+			EntryIt.RemoveCurrent();
+			MarkArrayDirty();
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////
 
 USGInventoryManagerComponent::USGInventoryManagerComponent(const FObjectInitializer& ObjectInitializer)
@@ -72,8 +85,18 @@ USGInventoryItemInstance* USGInventoryManagerComponent::AddItemDefinition(
 	return Result;
 }
 
+void USGInventoryManagerComponent::RemoveItemInstance(USGInventoryItemInstance* ItemInstance)
+{
+	InventoryList.RemoveEntry(ItemInstance);
+
+	if (ItemInstance && IsUsingRegisteredSubObjectList())
+	{
+		RemoveReplicatedSubObject(ItemInstance);
+	}
+}
+
 bool USGInventoryManagerComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
-	FReplicationFlags* RepFlags)
+                                                       FReplicationFlags* RepFlags)
 {
 	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
 

@@ -47,6 +47,7 @@ struct FSGInventoryList : public FFastArraySerializer
 
 public:
 	USGInventoryItemInstance* AddEntry(TSubclassOf<USGInventoryItemDefinition> ItemDef);
+	void RemoveEntry(USGInventoryItemInstance* Instance);
 	
 	UPROPERTY()
 	TArray<FSGInventoryEntry> Entries;
@@ -75,13 +76,16 @@ class SG_API USGInventoryManagerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	USGInventoryManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
-	/** InventoryItemDefinition을 통해 InventoryList에 추가하여 관리하며, InventoryItemInstance를 반환한다. */
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	USGInventoryItemInstance* AddItemDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDef);
 
+	/** InventoryItemDefinition을 통해 InventoryList에 추가하여 관리하며, InventoryItemInstance를 반환한다. */
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Inventory")
+	USGInventoryItemInstance* AddItemDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDef);
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Inventory")
+	void RemoveItemInstance(USGInventoryItemInstance* ItemInstance);
+
+	
 	//~UObject interface
 	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	virtual void ReadyForReplication() override;
