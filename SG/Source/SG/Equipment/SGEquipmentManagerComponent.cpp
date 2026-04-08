@@ -60,11 +60,12 @@ USGEquipmentInstance* FSGEquipmentList::AddEntry(TSubclassOf<USGEquipmentDefinit
 	NewEntry.Instance = NewObject<USGEquipmentInstance>(OwnerComp->GetOwner(), InstanceType);
 	Result = NewEntry.Instance;
 
-	USGAbilitySystemComponent* ASC = GetAbilitySystemComponent();
-	check(ASC);
-	for (const TObjectPtr<USGAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
+	if (USGAbilitySystemComponent* ASC = GetAbilitySystemComponent())
 	{
-		AbilitySet->GiveToAbilitySystem(ASC, &NewEntry.GrantedHandles, Result);
+		for (const TObjectPtr<USGAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
+		{
+			AbilitySet->GiveToAbilitySystem(ASC, &NewEntry.GrantedHandles, Result);
+		}
 	}
 	
 	// ActorsToSpawn을 통해, Actor들을 인스턴스화한다.
@@ -83,12 +84,12 @@ void FSGEquipmentList::RemoveEntry(USGEquipmentInstance* Instance)
 		FSGAppliedEquipmentEntry& Entry = *EntryIt;
 		if (Entry.Instance == Instance)
 		{
-			USGAbilitySystemComponent* ASC = GetAbilitySystemComponent();
-			check(ASC);
-			// TakeFromAbilitySystem()은 GiveToAbilitySystem()의 반대 역할로,
-			// ActivatableAbilities에서 제거한다. 
-			Entry.GrantedHandles.TakeFromAbilitySystem(ASC);
-			
+			if (USGAbilitySystemComponent* ASC = GetAbilitySystemComponent())
+			{
+				// TakeFromAbilitySystem()은 GiveToAbilitySystem()의 반대 역할로,
+				// ActivatableAbilities에서 제거한다. 
+				Entry.GrantedHandles.TakeFromAbilitySystem(ASC);	
+			}
 			// Actor 제거 및 iterator를 통해 안전하게 Array에서 삭제
 			Instance->DestroyEquipmentActors();
 			EntryIt.RemoveCurrent();
