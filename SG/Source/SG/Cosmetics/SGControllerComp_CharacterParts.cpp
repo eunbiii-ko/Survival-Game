@@ -22,13 +22,6 @@ void USGControllerComp_CharacterParts::BeginPlay()
 			OwningController->OnPossessedPawnChanged.AddDynamic(
 				this, &ThisClass::OnPossessedPawnChanged);
 		}
-
-		AGameStateBase* GameState = GetWorld()->GetGameState();
-		if (USGExperienceManagerComponent* ExpComp = GameState->FindComponentByClass<USGExperienceManagerComponent>())
-		{
-			ExpComp->CallOrRegister_OnExperienceLoaded(
-				FOnSGExperienceLoaded::FDelegate::CreateUObject(this, &ThisClass::OnExperienceLoaded));
-		}
 	}
 }
 
@@ -108,17 +101,4 @@ void USGControllerComp_CharacterParts::OnPossessedPawnChanged(APawn* OldPawn, AP
 	}
 
 	UE_LOG(LogSG, Display, TEXT("[메시 장착] USGControllerComp_CharacterParts::OnPossessedPawnChanged() in %d"), NewPawn->HasAuthority());
-}
-
-void USGControllerComp_CharacterParts::OnExperienceLoaded(const USGExperienceDefinition* LoadedExperienceDefinition)
-{
-	if (AController* OwningController = GetController<AController>())
-	{
-		OwningController->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::OnPossessedPawnChanged);
-
-		if (APawn* ControlledPawn = GetPawn<APawn>())
-		{
-			OnPossessedPawnChanged(nullptr, ControlledPawn);
-		}
-	}
 }

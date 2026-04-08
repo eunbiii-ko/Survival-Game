@@ -52,8 +52,6 @@ private:
 	USGPawnComp_CharacterParts* GetPawnCustomizer() const;
 	UFUNCTION()
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
-	UFUNCTION()
-	void OnExperienceLoaded(const USGExperienceDefinition* LoadedExperienceDefinition);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
