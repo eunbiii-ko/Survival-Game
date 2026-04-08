@@ -50,7 +50,7 @@ public:
 	void HandlePlayerStateReplicated();
 	/** AbilitySystemComponent의 AvatarActor 대상 초기화/해제 */
 	void InitializeAbilitySystem(USGAbilitySystemComponent* InASC, AActor* InOwnerActor);
-	void UninitalizeAbilitySystem();
+	void UninitializeAbilitySystem();
 
 	USGAbilitySystemComponent* GetSGAbilitySystemComponent() const { return AbilitySystemComp; }
 	

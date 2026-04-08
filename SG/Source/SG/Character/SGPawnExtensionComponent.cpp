@@ -126,6 +126,20 @@ void USGPawnExtensionComponent::SetupPlayerInputComponent()
 
 void USGPawnExtensionComponent::HandleControllerChanged()
 {
+	if (AbilitySystemComp && (AbilitySystemComp->GetAvatarActor() == GetPawnChecked<APawn>()))
+	{
+		ensure(AbilitySystemComp->AbilityActorInfo->OwnerActor == AbilitySystemComp->GetOwnerActor());
+		if (AbilitySystemComp->GetOwnerActor() == nullptr)
+		{
+			UninitializeAbilitySystem();
+		}
+		else
+		{
+			AbilitySystemComp->RefreshAbilityActorInfo();
+		}
+	}
+
+	
 	CheckDefaultInitialization();
 }
 
@@ -145,12 +159,11 @@ void USGPawnExtensionComponent::InitializeAbilitySystem(USGAbilitySystemComponen
 
 	if (AbilitySystemComp)
 	{
-		UninitalizeAbilitySystem();
+		UninitializeAbilitySystem();
 	}
 
 	APawn* Pawn = GetPawnChecked<APawn>();
 	AActor* ExistingActor = InASC->GetAvatarActor();
-	check(!ExistingActor);
 
 	// ASC를 업데이트하고, InitializeAbilityActorInfo()를 Pawn과 같이 호출하여
 	// AvatarActor를 Pawn으로 업데이트한다.
@@ -158,7 +171,7 @@ void USGPawnExtensionComponent::InitializeAbilitySystem(USGAbilitySystemComponen
 	AbilitySystemComp->InitAbilityActorInfo(InOwnerActor, Pawn);
 }
 
-void USGPawnExtensionComponent::UninitalizeAbilitySystem()
+void USGPawnExtensionComponent::UninitializeAbilitySystem()
 {
 	if (!AbilitySystemComp)
 	{
@@ -207,6 +220,7 @@ void USGPawnExtensionComponent::BeginPlay()
 
 void USGPawnExtensionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	UninitializeAbilitySystem();
 	// OnRegister()의 RegisterInitStateFeature()의 쌍을 맞추어준다.
 	UnregisterInitStateFeature();
 	Super::EndPlay(EndPlayReason);
