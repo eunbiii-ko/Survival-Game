@@ -62,7 +62,7 @@ USGEquipmentInstance* FSGEquipmentList::AddEntry(TSubclassOf<USGEquipmentDefinit
 
 	USGAbilitySystemComponent* ASC = GetAbilitySystemComponent();
 	check(ASC);
-	for (const TObjectPtr<USGAbilitySet> AbilitySet : EquipmentCDO->AbilitySetsToGrant)
+	for (const TObjectPtr<USGAbilitySet>& AbilitySet : EquipmentCDO->AbilitySetsToGrant)
 	{
 		AbilitySet->GiveToAbilitySystem(ASC, &NewEntry.GrantedHandles, Result);
 	}
@@ -126,7 +126,7 @@ void USGEquipmentManagerComponent::ReadyForReplication()
 {
 	Super::ReadyForReplication();
 
-	// Register existing LyraEquipmentInstances
+	// 이미 장착된 장비들을 등록한다. 
 	if (IsUsingRegisteredSubObjectList())
 	{
 		for (const FSGAppliedEquipmentEntry& Entry : EquipmentList.Entries)
@@ -141,21 +141,41 @@ void USGEquipmentManagerComponent::ReadyForReplication()
 	}
 }
 
+void USGEquipmentManagerComponent::UninitializeComponent()
+{
+	TArray<USGEquipmentInstance*> AllEquipmentInstances;
+
+	for (const FSGAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+	{
+		AllEquipmentInstances.Add(Entry.Instance);
+	}
+
+	for (USGEquipmentInstance* EquipInstance : AllEquipmentInstances)
+	{
+		UnequipItem(EquipInstance);
+	}
+	
+	Super::UninitializeComponent();
+}
+
 bool USGEquipmentManagerComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
                                                        FReplicationFlags* RepFlags)
 {
 	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
 
+	// EquipmentList를 순회하며 각 EquipmentInstance를 복제 대상으로 등록한다.
 	for (FSGAppliedEquipmentEntry& Entry : EquipmentList.Entries)
 	{
 		USGEquipmentInstance* Instance = Entry.Instance;
 
 		if (IsValid(Instance))
 		{
+			// ReplicateSubobject(): 변경 사항이 있으면 true, 없으면 false
 			WroteSomething |= Channel->ReplicateSubobject(Instance, *Bunch, *RepFlags);
 		}
 	}
 
+	// 하나라도 변경 사항이 있으면 true를 반환한다.
 	return WroteSomething;
 }
 
@@ -171,8 +191,12 @@ USGEquipmentInstance* USGEquipmentManagerComponent::EquipItem(TSubclassOf<USGEqu
 			// BP의 Evnet 노드를 호출한다.
 			Result->OnEquipped();
 
+			// SGEquipmentInstnace는 UObject이므로 액터가 아니다.
+			// -> 별도로 복제 대상으로 등록해줘야 한다.
 			if (IsUsingRegisteredSubObjectList() && IsReadyForReplication())
 			{
+				// 복제 대상으로 등록한다.
+				// 그래야 UPROPERTY(Replicated)로 선언된 Instigator, SpawnedActors가 클라이언트에 전달된다. 
 				AddReplicatedSubObject(Result);
 			}
 		}

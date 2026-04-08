@@ -48,8 +48,11 @@ struct FSGEquipmentList : public FFastArraySerializer
 
 public:
 	//~FFastArraySerializer contract
+	/** 클라이언트가 새 장비 항목을 수신했을 때 */
 	void PreReplicatedRemove(const TArrayView<int32> RemovedIndices, int32 FinalSize);
+	/** 클라이언트에서 장비 항목이 제거되기 직전 */
 	void PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize);
+	/** 클라이언트에서 기존 항목이 변경됐을 때 */
 	void PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize);
 	//~End of FFastArraySerializer contract
 
@@ -60,8 +63,12 @@ public:
 	
 	USGEquipmentInstance* AddEntry(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
 	void RemoveEntry(USGEquipmentInstance* Instance);
+
+private:
 	USGAbilitySystemComponent* GetAbilitySystemComponent() const;
+
 	
+public:
 	/** 장착물에 대한 관리 리스트 */
 	UPROPERTY()
 	TArray<FSGAppliedEquipmentEntry> Entries;
@@ -88,7 +95,11 @@ class SG_API USGEquipmentManagerComponent : public UPawnComponent
 public:
 	USGEquipmentManagerComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;
+
+	//~UActorComponent interface
 	virtual void ReadyForReplication() override;
+	virtual void UninitializeComponent() override;
+	//~End of UActorComponent interface
 	
 	//~UObject interface
 	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
