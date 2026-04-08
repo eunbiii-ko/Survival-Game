@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataAsset.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "SGAbilitySet.generated.h"
 
 struct FGameplayAbilitySpecHandle;
