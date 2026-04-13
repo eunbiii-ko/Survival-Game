@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "SGTaggedActor.generated.h"
 
@@ -17,4 +18,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	FGameplayTag CosmeticTag;
 };

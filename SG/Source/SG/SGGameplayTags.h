@@ -17,4 +17,12 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Mouse);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Fire);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_CosmeticTest);
+
+	/** Event */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Movement_WeaponFire);
+
+
+	/** Cosmetic Tag */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body);
 }
