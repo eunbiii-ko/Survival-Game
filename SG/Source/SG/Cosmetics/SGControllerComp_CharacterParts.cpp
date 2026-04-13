@@ -3,7 +3,9 @@
 
 #include "SG/Cosmetics/SGControllerComp_CharacterParts.h"
 #include "SGPawnComp_CharacterParts.h"
+#include "SG/SGGameplayTags.h"
 #include "SG/SGLogChannels.h"
+#include "SG/AbilitySystem/SGTaggedActor.h"
 #include "SG/GameModes/SGExperienceManagerComponent.h"
 
 USGControllerComp_CharacterParts::USGControllerComp_CharacterParts(const FObjectInitializer& ObjectInitializer)
@@ -32,6 +34,26 @@ void USGControllerComp_CharacterParts::EndPlay(const EEndPlayReason::Type EndPla
 	Super::EndPlay(EndPlayReason);
 }
 
+void USGControllerComp_CharacterParts::ChangeCosmeticPart(FGameplayTag PartTagToChange, const FSGCharacterPart& NewPart)
+{
+	for (auto EntryIt = CharacterParts.CreateIterator(); EntryIt; ++EntryIt)
+	{
+		AActor* CosmeticActor = EntryIt->Part.PartClass.GetDefaultObject();
+		if (!CosmeticActor) continue;
+
+		ASGTaggedActor* TaggedActor = Cast<ASGTaggedActor>(CosmeticActor);
+		if (!TaggedActor) continue;
+
+		if (TaggedActor->CosmeticTag == PartTagToChange)
+		{
+			RemoveCharacterPart(EntryIt->Part);
+			AddCharacterPart(NewPart);
+			return;
+		}
+	}
+	
+}
+
 void USGControllerComp_CharacterParts::AddCharacterPart(const FSGCharacterPart& NewPart)
 {
 	UE_LOG(LogSG, Display, TEXT("[메시 장착] USGControllerComp_CharacterParts::AddCharacterPart()"));
@@ -49,6 +71,23 @@ void USGControllerComp_CharacterParts::AddCharacterPartInternal(const FSGCharact
 	if (USGPawnComp_CharacterParts* PawnCustomizer = GetPawnCustomizer())
 	{
 		NewEntry.Handle = PawnCustomizer->AddCharacterPart(NewPart);
+	}
+}
+
+void USGControllerComp_CharacterParts::RemoveCharacterPart(const FSGCharacterPart& PartToRemove)
+{
+	for (auto EntryIt = CharacterParts.CreateIterator(); EntryIt; ++EntryIt)
+	{
+		if (FSGCharacterPart::AreEquivalentParts(EntryIt->Part, PartToRemove))
+		{
+			if (USGPawnComp_CharacterParts* PawnCustomizer = GetPawnCustomizer())
+			{
+				PawnCustomizer->RemoveCharacterPart(EntryIt->Handle);
+			}
+
+			EntryIt.RemoveCurrent();
+			break;
+		}
 	}
 }
 

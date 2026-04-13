@@ -24,6 +24,11 @@ struct FSGCharacterPart
 	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName SocketName;
+
+	static bool AreEquivalentParts(const FSGCharacterPart& A, const FSGCharacterPart& B)
+	{
+		return (A.PartClass == B.PartClass) && (A.SocketName == B.SocketName);
+	}
 };
 
 //////////////////////////////////////////////////////////////////////

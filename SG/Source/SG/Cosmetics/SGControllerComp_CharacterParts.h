@@ -7,6 +7,7 @@
 #include "SG/Cosmetics/SGCharacterPartTypes.h"
 #include "SGControllerComp_CharacterParts.generated.h"
 
+struct FGameplayTag;
 class USGExperienceDefinition;
 class USGPawnComp_CharacterParts;
 
@@ -41,12 +42,16 @@ public:
 	USGControllerComp_CharacterParts(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	void ChangeCosmeticPart(FGameplayTag PartTagToChange, const FSGCharacterPart& NewPart);
 	
 private:
 	UFUNCTION(BlueprintCallable, Category = "Cosmetics")
 	void AddCharacterPart(const FSGCharacterPart& NewPart);
 	void AddCharacterPartInternal(const FSGCharacterPart& NewPart);
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Cosmetics")
+	void RemoveCharacterPart(const FSGCharacterPart& PartToRemove);
 	void RemoveAllCharacterParts();
 	
 	USGPawnComp_CharacterParts* GetPawnCustomizer() const;
@@ -56,4 +61,7 @@ private:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
 	TArray<FSGControllerCharacterPartEntry> CharacterParts;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
+	FSGCharacterPart WomenPart;
 };
