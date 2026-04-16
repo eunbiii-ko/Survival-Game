@@ -17,6 +17,9 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Look_Mouse, "InputTag.Look.Mouse", "Look (mouse) input.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Weapon_Fire, "InputTag.Weapon.Fire", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_CosmeticTest, "InputTag.CosmeticTest", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_0, "InputTag.QuickBar.Weapon.0", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_1, "InputTag.QuickBar.Weapon.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_2, "InputTag.QuickBar.Weapon.2", "");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Movement_WeaponFire, "Event.Movement.WeaponFire", "");
 
