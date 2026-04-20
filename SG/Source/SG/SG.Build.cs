@@ -26,6 +26,8 @@ public class SG : ModuleRules
 			"NetCore",
 			// CommonUser
 			"CommonUser",
+			// Animation
+			"AnimGraphRuntime",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -24,4 +24,7 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	FSGCharacterPart NewCosmeticPart;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UAnimInstance> CosmeticLayer;
 };

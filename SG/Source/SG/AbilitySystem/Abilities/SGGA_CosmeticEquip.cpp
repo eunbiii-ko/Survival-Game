@@ -3,6 +3,7 @@
 
 #include "SG/AbilitySystem/Abilities/SGGA_CosmeticEquip.h"
 
+#include "GameFramework/Character.h"
 #include "SG/SGGameplayTags.h"
 #include "SG/Cosmetics/SGControllerComp_CharacterParts.h"
 
@@ -22,6 +23,12 @@ void USGGA_CosmeticEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	// 서버에서만 실행한다. 
+	if (!HasAuthority(&ActivationInfo))
+	{
+		return;
+	}
+	
 	if (!NewCosmeticPart.PartClass)
 	{
 		K2_EndAbility();
@@ -49,6 +56,21 @@ void USGGA_CosmeticEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		return;
 	}
 
+	// Cosmetic Mesh를 적용한다.
 	CharacterPartControllerComp->ChangeCosmeticPart(SGGameplayTags::Cosmetic_Body, NewCosmeticPart);
+
+	ACharacter* Character = Cast<ACharacter>(AvatarPawn);
+	if (!Character)
+	{
+		K2_EndAbility();
+		return;
+	}
+	UAnimInstance* AnimInst = Character->GetMesh()->GetAnimInstance();
+	if (!AnimInst)
+	{
+		K2_EndAbility();
+		return;
+	}
+	AnimInst->LinkAnimClassLayers(CosmeticLayer);
 	K2_EndAbility();
 }

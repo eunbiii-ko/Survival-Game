@@ -263,7 +263,9 @@ void USGPawnComp_CharacterParts::BroadcastChanged()
 
 		// SkeletalMesh를 초기화 및 Animation 초기화 시켜준다.
 		MeshComp->SetSkeletalMesh(DesiredMesh, bReinitPose);
-
+		MeshComp->LinkAnimClassLayers(Layer);
+		UE_LOG(LogSG, Display, TEXT("USGPawnComp_CharacterParts::BroadcastChanged() in %d"), GetOwner()->HasAuthority());
+		
 		// PhysicsAsset을 초기화한다.
 		if (UPhysicsAsset* PhysicsAsset = BodyMeshes.ForcedPhysicsAsset)
 		{

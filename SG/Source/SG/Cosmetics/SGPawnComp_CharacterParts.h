@@ -155,6 +155,9 @@ private:
 	/** 애니메이션 적용을 위한 메시와 연결고리 */
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics", meta = (AllowPrivateAccess = true))
 	FSGAnimBodyStyleSelectionSet BodyMeshes;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UAnimInstance> Layer;
 };
 
 
