@@ -28,4 +28,8 @@ namespace SGGameplayTags
 
 	/** Cosmetic Tag */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body);
+
+
+	/** Notify */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Notify_Equip_Weapon_Sword);
 }

@@ -26,4 +26,8 @@ namespace SGGameplayTags
 	
 	/** Cosmetic Tag */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body, "Cosmetic.Body", "");
+
+
+	/** Notify */
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_Equip_Weapon_Sword, "Notify.Equip.Weapon.Sword", "");
 }
