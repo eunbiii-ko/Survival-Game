@@ -13,10 +13,15 @@ ASGCharacter::ASGCharacter(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
+	NetCullDistanceSquared = 900000000.0f;
+	
 	PawnExtComp = CreateDefaultSubobject<USGPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
 
 	CameraComp = CreateDefaultSubobject<USGCameraComponent>(TEXT("CameraComponent"));
 	CameraComp->SetRelativeLocation(FVector(-300.0f, 0.0f, 75.0f));
+
+	// Dedicated Server에서도 애니메이션 업데이트 (AnimNotify 발동을 위해 필요)
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 }
 
 void ASGCharacter::BeginPlay()

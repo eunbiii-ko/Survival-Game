@@ -36,7 +36,7 @@ void USGAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Direction = UKismetAnimationLibrary::CalculateDirection(Velocity, OwnerCharacter->GetActorRotation());
 		Rotation = UKismetMathLibrary::NormalizedDeltaRotator(UKismetMathLibrary::MakeRotFromX(Velocity), OwnerCharacter->GetActorRotation()).Yaw;
 		bShouldMove = (GroundSpeed > 0.f);
-		UE_LOG(LogSG, Display, TEXT("Speed: %f in %d"), GroundSpeed, OwnerCharacter->HasAuthority());
+		//UE_LOG(LogSG, Display, TEXT("Speed: %f in %d"), GroundSpeed, OwnerCharacter->HasAuthority());
 	}
 	
 	if (OwnerMovementComp)
