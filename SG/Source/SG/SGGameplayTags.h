@@ -28,6 +28,10 @@ namespace SGGameplayTags
 
 	/** Cosmetic Tag */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_2);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_3);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_4);
 
 
 	/** Notify */

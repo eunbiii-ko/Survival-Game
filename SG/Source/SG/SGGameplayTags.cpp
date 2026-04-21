@@ -26,6 +26,10 @@ namespace SGGameplayTags
 	
 	/** Cosmetic Tag */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body, "Cosmetic.Body", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_1, "Cosmetic.Body.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_2, "Cosmetic.Body.2", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_3, "Cosmetic.Body.3", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_4, "Cosmetic.Body.4", "");
 
 
 	/** Notify */
