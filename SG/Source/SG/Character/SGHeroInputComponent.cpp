@@ -12,7 +12,10 @@
 #include "EnhancedInputSubsystemInterface.h"
 #include "PlayerMappableInputConfig.h"
 #include "Components/GameFrameworkComponentManager.h"
+#include "Framework/Text/ShapedTextCache.h"
+#include "SG/SGLogChannels.h"
 #include "SG/AbilitySystem/SGAbilitySystemComponent.h"
+#include "SG/Cosmetics/SGControllerComp_CharacterParts.h"
 
 const FName USGHeroInputComponent::NAME_ActorFeatureName("HeroInput");
 const FName USGHeroInputComponent::NAME_BindInputsNow("BindInputsNow");

@@ -30,7 +30,7 @@ public:
 	 */
 	UFUNCTION(BlueprintImplementableEvent, Category = "Equipment", meta = (DisplayName = "OnEquipped"))
 	void K2_OnEquipped();
-	UFUNCTION(BlueprintImplementableEvent, Category = "Equipment", meta = (DisplayName = "OnEquipped"))
+	UFUNCTION(BlueprintImplementableEvent, Category = "Equipment", meta = (DisplayName = "OnUnequipped"))
 	void K2_OnUnequipped();
 
 	UFUNCTION(BlueprintPure, Category = "Equipment")
@@ -54,6 +54,9 @@ public:
 		meta = (DeterminesOutputType = PawnType))
 	APawn* GetTypedPawn(TSubclassOf<APawn> PawnType) const;
 
+	UFUNCTION(BlueprintPure, Category = "Equipment")
+	TArray<AActor*> GetSpawnedActors() const { return SpawnedActors; }
+
 private:
 	UFUNCTION()
 	void OnRep_Instigator();
@@ -66,5 +69,4 @@ public:
 	/** SGEquipmentDefinition에 맞게 Spawn된 Actor Isntance들 */
 	UPROPERTY(Replicated)
 	TArray<TObjectPtr<AActor>> SpawnedActors;
-
 };

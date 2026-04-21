@@ -109,6 +109,9 @@ public:
 	
 	USGEquipmentInstance* EquipItem(TSubclassOf<USGEquipmentDefinition> EquipmentDefinition);
 	void UnequipItem(USGEquipmentInstance* ItemInstance);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<USGEquipmentInstance*> GetEquipmentInstancesOfType(TSubclassOf<USGEquipmentInstance> InstanceType) const;
 	
 	UPROPERTY(Replicated)
 	FSGEquipmentList EquipmentList;

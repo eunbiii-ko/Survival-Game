@@ -222,3 +222,24 @@ void USGEquipmentManagerComponent::UnequipItem(USGEquipmentInstance* ItemInstanc
 		EquipmentList.RemoveEntry(ItemInstance);
 	}
 }
+
+TArray<USGEquipmentInstance*> USGEquipmentManagerComponent::GetEquipmentInstancesOfType(
+	TSubclassOf<USGEquipmentInstance> InstanceType) const
+{
+	TArray<USGEquipmentInstance*> Result;
+
+	// EquipmentList를 순회하며
+	for (const FSGAppliedEquipmentEntry& Entry : EquipmentList.Entries)
+	{
+		if (USGEquipmentInstance* Instance = Entry.Instance)
+		{
+			// InstanceType과 일치하는지 확인한다.
+			if (Instance->IsA(InstanceType))
+			{
+				Result.Add(Instance);
+			}
+		}
+	}
+
+	return Result;
+}
