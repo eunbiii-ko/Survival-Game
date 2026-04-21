@@ -47,7 +47,31 @@ void USGQuickBarComponent::AddItemToSlot(int32 SlotIndex, USGInventoryItemInstan
 	}
 }
 
-void USGQuickBarComponent::SetActiveSlotIndex(int32 NewIndex)
+USGInventoryItemInstance* USGQuickBarComponent::RemoveItemFromSlot(int32 SlotIndex)
+{
+	USGInventoryItemInstance* Result = nullptr;
+
+	if (ActiveSlotIndex == SlotIndex)
+	{
+		UnequipItemInSlot();
+		ActiveSlotIndex = -1;
+	}
+
+	if (Slots.IsValidIndex(SlotIndex))
+	{
+		Result = Slots[SlotIndex];
+
+		if (Result != nullptr)
+		{
+			Slots[SlotIndex] = nullptr;
+			OnRep_Slots();
+		}
+	}
+
+	return Result;
+}
+
+void USGQuickBarComponent::SetActiveSlotIndex_Implementation(int32 NewIndex)
 {
 	if ((Slots.IsValidIndex(NewIndex)) && (ActiveSlotIndex != NewIndex))
 	{
@@ -99,7 +123,8 @@ void USGQuickBarComponent::EquipItemInSlot()
 	{
 		// SlotItem을 통해 (InventoryItemInstance) InventoryFragment_EquippableItem의 Fragment를 찾는다:
 		// - 찾는 것이 실패했다면 장착할 수 없는 Inventory Item임을 의미한다.
-		if (const USGInventoryItemFragment_EquippableItem* EquipInfo = SlotItem->FindFragmentByClass<USGInventoryItemFragment_EquippableItem>())
+		if (const USGInventoryItemFragment_EquippableItem* EquipInfo =
+			SlotItem->FindFragmentByClass<USGInventoryItemFragment_EquippableItem>())
 		{
 			// EquippableItem에서 EquipmentDefinition을 찾는다:
 			// - EquipmentDefinition이 있어야 장착할 수 있다.

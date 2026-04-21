@@ -27,12 +27,17 @@ public:
 	 * ControllerComponent interface
 	 */
 	virtual void BeginPlay() override;
+
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	void AddItemToSlot(int32 SlotIndex, USGInventoryItemInstance* Item);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
+	USGInventoryItemInstance* RemoveItemFromSlot(int32 SlotIndex);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetActiveSlotIndex(int32 NewIndex);
 
+	
+private:
 	USGEquipmentManagerComponent* FindEquipmentManager() const;
 	void UnequipItemInSlot();
 	void EquipItemInSlot();
@@ -40,10 +45,11 @@ public:
 
 	UFUNCTION()
 	void OnRep_Slots();
-
 	UFUNCTION()
 	void OnRep_ActiveSlotIndex();
+
 	
+public:
 	/** HUD QuickBar Slot 개수 */
 	UPROPERTY()
 	int32 NumSlots = 3;
