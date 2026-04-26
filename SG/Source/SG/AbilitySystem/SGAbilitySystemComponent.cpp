@@ -4,10 +4,30 @@
 #include "SG/AbilitySystem/SGAbilitySystemComponent.h"
 
 #include "Abilities/SGGameplayAbility.h"
+#include "SG/Animation/SGAnimInstance.h"
 
 USGAbilitySystemComponent::USGAbilitySystemComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+void USGAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
+{
+	FGameplayAbilityActorInfo* ActorInfo = AbilityActorInfo.Get();
+	check(ActorInfo);
+	check(InOwnerActor);
+
+	const bool bHasNewPawnAvatar = Cast<APawn>(InAvatarActor) && (InAvatarActor != ActorInfo->AvatarActor);
+
+	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
+
+	if (bHasNewPawnAvatar)
+	{
+		if (USGAnimInstance* AnimInst = Cast<USGAnimInstance>(ActorInfo->GetAnimInstance()))
+		{
+			AnimInst->InitializeWithAbilitySystem(this);
+		}
+	}
 }
 
 void USGAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)

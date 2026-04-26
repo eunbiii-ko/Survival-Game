@@ -17,10 +17,16 @@ class SG_API USGAbilitySystemComponent : public UAbilitySystemComponent
 public:
 	USGAbilitySystemComponent(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	//~ AbilitySystemComponent's interface
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
+	//~ End of AbilitySystemComponent's interface
+
+	//~ member methods
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
-
+	//~ End of member methods
+	
 	/** Ability Input을 처리할 Pending Queue */
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
