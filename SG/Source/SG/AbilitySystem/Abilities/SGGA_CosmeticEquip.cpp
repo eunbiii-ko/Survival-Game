@@ -6,15 +6,24 @@
 #include "GameFramework/Character.h"
 #include "SG/SGGameplayTags.h"
 #include "SG/Cosmetics/SGControllerComp_CharacterParts.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 
 USGGA_CosmeticEquip::USGGA_CosmeticEquip(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 
 	ActivationPolicy = ESGAbilityActivationPolicy::OnInputTriggered;
+
+	if (HasAnyFlags(RF_ClassDefaultObject))
+	{
+		FAbilityTriggerData TriggerData;
+		TriggerData.TriggerTag = SGGameplayTags::Event_Equip_Cosmetic;
+		TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+		AbilityTriggers.Add(TriggerData);	
+	}
 }
 
 void USGGA_CosmeticEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -24,18 +33,13 @@ void USGGA_CosmeticEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	// 서버에서만 실행한다. 
-	if (!HasAuthority(&ActivationInfo))
-	{
-		return;
-	}
-	
-	if (!NewCosmeticPart.PartClass)
+	if (!HasAuthority(&ActivationInfo) || !TriggerEventData)
 	{
 		K2_EndAbility();
 		return;
 	}
 
-	APawn* AvatarPawn = Cast<APawn>(ActorInfo->AvatarActor.Get());
+	APawn* AvatarPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
 	if (!AvatarPawn)
 	{
 		K2_EndAbility();
@@ -56,8 +60,16 @@ void USGGA_CosmeticEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		return;
 	}
 
-	// Cosmetic Mesh를 적용한다.
-	CharacterPartControllerComp->ChangeCosmeticPart(SGGameplayTags::Cosmetic_Body, NewCosmeticPart);
+	// InstigatorTags를 순회하며 Map에서 해당 Part를 찾아 장착
+	for (const FGameplayTag& Tag : TriggerEventData->InstigatorTags)
+	{
+		if (const FSGCharacterPart* Part = CosmeticPartMap.Find(Tag))
+		{
+			// Cosmetic Mesh를 적용한다.
+			CharacterPartControllerComp->ChangeCosmeticPart(Tag, *Part);
+		}
+	}
+
 
 	ACharacter* Character = Cast<ACharacter>(AvatarPawn);
 	if (!Character)

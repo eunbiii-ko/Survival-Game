@@ -36,22 +36,48 @@ void USGControllerComp_CharacterParts::EndPlay(const EEndPlayReason::Type EndPla
 
 void USGControllerComp_CharacterParts::ChangeCosmeticPart(FGameplayTag PartTagToChange, const FSGCharacterPart& NewPart)
 {
-	for (auto EntryIt = CharacterParts.CreateIterator(); EntryIt; ++EntryIt)
+	USGPawnComp_CharacterParts* PawnCustomizer = GetPawnCustomizer();
+	if (!PawnCustomizer)
 	{
-		AActor* CosmeticActor = EntryIt->Part.PartClass.GetDefaultObject();
-		if (!CosmeticActor) continue;
+		AddCharacterPart(NewPart);
+		return;
+	}
 
-		ASGTaggedActor* TaggedActor = Cast<ASGTaggedActor>(CosmeticActor);
-		if (!TaggedActor) continue;
+	// GetCombinedTags()로 현재 장착된 태그 전체 확인
+	FGameplayTagContainer CombinedTags = PawnCustomizer->GetCombinedTags(FGameplayTag());
 
-		if (TaggedActor->CosmeticTag == PartTagToChange)
+	// PartTagToChange와 같은 종류(MatchesTag 양방향)의 기존 태그 탐색
+	FGameplayTag TagToRemove;
+	for (const FGameplayTag& ExistingTag : CombinedTags)
+	{
+		if (ExistingTag.MatchesTag(PartTagToChange) || PartTagToChange.MatchesTag(ExistingTag))
 		{
-			RemoveCharacterPart(EntryIt->Part);
-			AddCharacterPart(NewPart);
-			return;
+			TagToRemove = ExistingTag;
+			break;
 		}
 	}
-	
+
+	// 찾은 태그에 해당하는 CharacterParts Entry 제거
+	if (TagToRemove.IsValid())
+	{
+		for (auto EntryIt = CharacterParts.CreateIterator(); EntryIt; ++EntryIt)
+		{
+			AActor* CosmeticActor = EntryIt->Part.PartClass.GetDefaultObject();
+			if (!CosmeticActor) continue;
+
+			ASGTaggedActor* TaggedActor = Cast<ASGTaggedActor>(CosmeticActor);
+			if (!TaggedActor) continue;
+
+			if (TaggedActor->CosmeticTag.MatchesTagExact(TagToRemove))
+			{
+				RemoveCharacterPart(EntryIt->Part);
+				break;
+			}
+		}
+	}
+
+	AddCharacterPart(NewPart);
+
 }
 
 void USGControllerComp_CharacterParts::AddCharacterPart(const FSGCharacterPart& NewPart)

@@ -16,6 +16,7 @@
 #include "SG/SGLogChannels.h"
 #include "SG/AbilitySystem/SGAbilitySystemComponent.h"
 #include "SG/Cosmetics/SGControllerComp_CharacterParts.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 const FName USGHeroInputComponent::NAME_ActorFeatureName("HeroInput");
 const FName USGHeroInputComponent::NAME_BindInputsNow("BindInputsNow");
@@ -110,6 +111,7 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 					// -> 바인딩 후, InputEvent에 따라 멤버 함수가 트리거된다.
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, false);
+					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_CosmeticTest, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticTest, false);
 
 					TArray<uint32> BindHnaldes;
 					SGIC->BindAbilityActions(InputConfig, this,
@@ -172,6 +174,18 @@ void USGHeroInputComponent::Input_LookMouse(const FInputActionValue& InputAction
 		double AimInversionValue = -Value.Y;
 		Pawn->AddControllerPitchInput(AimInversionValue);
 	}
+}
+
+void USGHeroInputComponent::Input_CosmeticTest(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Payload;
+	Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Arm_1);
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		GetOwner(),
+		SGGameplayTags::Event_Equip_Cosmetic,
+		Payload
+	);
 }
 
 void USGHeroInputComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)

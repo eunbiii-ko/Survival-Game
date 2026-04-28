@@ -43,6 +43,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Cosmetics")
 	void ChangeCosmeticPart(FGameplayTag PartTagToChange, const FSGCharacterPart& NewPart);
 	
 private:
@@ -61,7 +62,4 @@ private:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
 	TArray<FSGControllerCharacterPartEntry> CharacterParts;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Cosmetics")
-	FSGCharacterPart WomenPart;
 };

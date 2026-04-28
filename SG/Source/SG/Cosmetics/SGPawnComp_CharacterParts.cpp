@@ -6,6 +6,7 @@
 #include "GameplayTagAssetInterface.h"
 #include "GameFramework/Character.h"
 #include "Net/UnrealNetwork.h"
+#include "SG/SGGameplayTags.h"
 #include "SG/SGLogChannels.h"
 
 
@@ -65,7 +66,7 @@ FGameplayTagContainer FSGCharacterPartList::CollectCombinedTags() const
 	// Entries를 순회하며
 	for (const FSGAppliedCharacterPartEntry& Entry : Entries)
 	{
-		// Part Actor가 생성되어 SpawnedComp에 캐싱되어 있으면
+		// 클라이언트: Part Actor가 생성되어 SpawnedComp에 캐싱되어 있으면
 		if (Entry.SpawnedComp)
 		{
 			// 해당 Actor의 IGameplayTagAssetInterface를 통해 GameplayTag를 검색한다.
@@ -73,6 +74,16 @@ FGameplayTagContainer FSGCharacterPartList::CollectCombinedTags() const
 			// - 나중에 각 Part에 대해 GameplayTag를 넣고 싶다면 이것을 상속받아 정의해야 한다.
 			//		- 예를 들어, 특정 Lv100 이상 장착 가능한 장비를 만들고 싶다면 넣어야 한다.
 			if (IGameplayTagAssetInterface* TagInterface = Cast<IGameplayTagAssetInterface>(Entry.SpawnedComp->GetChildActor()))
+			{
+				TagInterface->GetOwnedGameplayTags(Result);
+			}
+		}
+		// 서버: SpawnedComp는 NotReplicated
+		else if (Entry.Part.PartClass)
+		{
+			// DefaultObject에서 태그 가져옴
+			if (IGameplayTagAssetInterface* TagInterface =
+				Cast<IGameplayTagAssetInterface>(Entry.Part.PartClass.GetDefaultObject()))
 			{
 				TagInterface->GetOwnedGameplayTags(Result);
 			}

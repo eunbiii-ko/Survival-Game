@@ -20,8 +20,11 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_0, "InputTag.QuickBar.Weapon.0", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_1, "InputTag.QuickBar.Weapon.1", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_2, "InputTag.QuickBar.Weapon.2", "");
-	
+
+
+	/** Event */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Movement_WeaponFire, "Event.Movement.WeaponFire", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip_Cosmetic, "Event.Equip.Cosmetic", "");
 
 	
 	/** Cosmetic Tag */
@@ -30,6 +33,10 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_2, "Cosmetic.Body.2", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_3, "Cosmetic.Body.3", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body_4, "Cosmetic.Body.4", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Clothes_Top_1, "Cosmetic.Female.Clothes.Top.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Clothes_Bottoms_1, "Cosmetic.Female.Clothes.Bottoms.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hair_1, "Cosmetic.Female.Hair.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Arm_1, "Cosmetic.Female.Arm.1", "");
 
 
 	/** Notify */

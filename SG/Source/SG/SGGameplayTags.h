@@ -22,8 +22,10 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_1);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_2);
 
+	
 	/** Event */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Movement_WeaponFire);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip_Cosmetic);
 
 
 	/** Cosmetic Tag */
@@ -32,6 +34,10 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_2);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_3);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_4);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Top_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Bottoms_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Hair_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Arm_1);
 
 
 	/** Notify */

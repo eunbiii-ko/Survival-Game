@@ -7,6 +7,7 @@
 #include "SG/Cosmetics/SGCharacterPartTypes.h"
 #include "SGGA_CosmeticEquip.generated.h"
 
+
 /**
  * 
  */
@@ -27,4 +28,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAnimInstance> CosmeticLayer;
+
+	// Key: CosmeticTag, Value: 장착할 CharacterPart
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FGameplayTag, FSGCharacterPart> CosmeticPartMap;
 };
