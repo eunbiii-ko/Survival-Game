@@ -43,6 +43,8 @@ protected:
 	void Input_CosmeticTest(const FInputActionValue& InputActionValue);
 	void Input_CosmeticTop(const FInputActionValue& InputActionValue);
 	void Input_CosmeticBottom(const FInputActionValue& InputActionValue);
+	void Input_C(const FInputActionValue& InputActionValue);
+	void Input_V(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 
@@ -57,4 +59,6 @@ protected:
 	bool bTopIndexPlus = true;
 	int32 BottomIndex = 0;
 	bool bBottomIndexPlus = true;
+	bool bHand = true;
+	bool bFoot = true;
 };

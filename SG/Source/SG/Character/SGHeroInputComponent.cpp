@@ -114,6 +114,8 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_CosmeticTest, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticTest, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_Z, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticTop, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_X, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticBottom, false);
+					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_C, ETriggerEvent::Triggered, this, &ThisClass::Input_C, false);
+					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_V, ETriggerEvent::Triggered, this, &ThisClass::Input_V, false);
 
 					TArray<uint32> BindHnaldes;
 					SGIC->BindAbilityActions(InputConfig, this,
@@ -207,6 +209,24 @@ void USGHeroInputComponent::Input_CosmeticTest(const FInputActionValue& InputAct
 		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Bottoms_2);
 	}
 
+	if (bHand)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Hand_1);
+	}
+	else 
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Hand_2);
+	}
+
+	if (bFoot)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Foot_1);
+	}
+	else 
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Foot_2);
+	}
+
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		GetOwner(),
 		SGGameplayTags::Event_Equip_Cosmetic,
@@ -283,6 +303,16 @@ void USGHeroInputComponent::Input_CosmeticBottom(const FInputActionValue& InputA
 	// 	SGGameplayTags::Event_Equip_Cosmetic,
 	// 	Payload
 	// );
+}
+
+void USGHeroInputComponent::Input_C(const FInputActionValue& InputActionValue)
+{
+	bHand = !bHand;
+}
+
+void USGHeroInputComponent::Input_V(const FInputActionValue& InputActionValue)
+{
+	bFoot = !bFoot;
 }
 
 void USGHeroInputComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)

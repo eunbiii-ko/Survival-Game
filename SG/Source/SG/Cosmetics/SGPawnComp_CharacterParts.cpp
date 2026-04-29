@@ -323,7 +323,7 @@ void USGPawnComp_CharacterParts::BroadcastChanged(const FGameplayTagContainer& I
 			TopTags = InTags.Filter(FGameplayTagContainer(SGGameplayTags::Cosmetic_Female_Hair));
 			if (TopTags.IsValid())
 			{
-				USkeletalMesh* DesiredMesh = BodyMeshes.SelectBestBodyStyle(InTags);
+				USkeletalMesh* DesiredMesh = BodyMeshes.SelectBestBodyStyle(TopTags);
 				// SkeletalMesh를 초기화 및 Animation 초기화 시켜준다.
 				MeshComp->SetSkeletalMesh(DesiredMesh, bReinitPose);
 				MeshComp->LinkAnimClassLayers(Layer);
@@ -381,6 +381,48 @@ void USGPawnComp_CharacterParts::BroadcastChanged(const FGameplayTagContainer& I
 				{
 					BottomMeshComp->SetSkeletalMesh(nullptr);
 					BottomMeshComp->SetVisibility(false, true);
+				}
+			}
+		}
+
+		// Hand 태그 필터링 및 적용
+		{
+			FGameplayTagContainer HandTags;
+			HandTags = InTags.Filter(FGameplayTagContainer(SGGameplayTags::Cosmetic_Female_Hand));
+			if (HandTags.IsValid())
+			{
+				USkeletalMesh* HandMesh = BodyMeshes.SelectBestBodyStyle(HandTags);
+				if (HandMesh && HandMeshComp)
+				{
+					HandMeshComp->SetSkeletalMesh(HandMesh, bReinitPose);
+					HandMeshComp->SetMasterPoseComponent(MeshComp);
+					HandMeshComp->SetVisibility(true, true);
+				}
+				else if (HandMeshComp)
+				{
+					HandMeshComp->SetSkeletalMesh(nullptr);
+					HandMeshComp->SetVisibility(false, true);
+				}
+			}
+		}
+
+		// Foot 태그 필터링 및 적용
+		{
+			FGameplayTagContainer FootTags;
+			FootTags = InTags.Filter(FGameplayTagContainer(SGGameplayTags::Cosmetic_Female_Foot));
+			if (FootTags.IsValid())
+			{
+				USkeletalMesh* FootMesh = BodyMeshes.SelectBestBodyStyle(FootTags);
+				if (FootMesh && FootMeshComp)
+				{
+					FootMeshComp->SetSkeletalMesh(FootMesh, bReinitPose);
+					FootMeshComp->SetMasterPoseComponent(MeshComp);
+					FootMeshComp->SetVisibility(true, true);
+				}
+				else if (FootMeshComp)
+				{
+					FootMeshComp->SetSkeletalMesh(nullptr);
+					FootMeshComp->SetVisibility(false, true);
 				}
 			}
 		}
@@ -475,6 +517,30 @@ void USGPawnComp_CharacterParts::EnsureSubMeshComponents()
 		if (USkeletalMeshComponent* ParentMesh = GetParentMeshComponent())
 		{
 			BottomMeshComp->SetMasterPoseComponent(ParentMesh);
+		}
+	}
+
+	if (!HandMeshComp)
+	{
+		HandMeshComp = NewObject<USkeletalMeshComponent>(GetOwner(), TEXT("CharacterPart_HandMesh"));
+		HandMeshComp->SetIsReplicated(false);
+		HandMeshComp->RegisterComponent();
+		HandMeshComp->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform);
+		if (USkeletalMeshComponent* ParentMesh = GetParentMeshComponent())
+		{
+			HandMeshComp->SetMasterPoseComponent(ParentMesh);
+		}
+	}
+
+	if (!FootMeshComp)
+	{
+		FootMeshComp = NewObject<USkeletalMeshComponent>(GetOwner(), TEXT("CharacterPart_FootMesh"));
+		FootMeshComp->SetIsReplicated(false);
+		FootMeshComp->RegisterComponent();
+		FootMeshComp->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform);
+		if (USkeletalMeshComponent* ParentMesh = GetParentMeshComponent())
+		{
+			FootMeshComp->SetMasterPoseComponent(ParentMesh);
 		}
 	}
 }

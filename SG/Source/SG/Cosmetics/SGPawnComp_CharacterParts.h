@@ -164,6 +164,12 @@ private:
 
 	UPROPERTY(Transient)
 	USkeletalMeshComponent* BottomMeshComp = nullptr;
+
+	UPROPERTY(Transient)
+	USkeletalMeshComponent* HandMeshComp = nullptr;
+
+	UPROPERTY(Transient)
+	USkeletalMeshComponent* FootMeshComp = nullptr;
 };
 
 

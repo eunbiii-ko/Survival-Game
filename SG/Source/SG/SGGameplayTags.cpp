@@ -22,6 +22,8 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_2, "InputTag.QuickBar.Weapon.2", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_Z, "InputTag.Test.Z", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_X, "InputTag.Test.X", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_C, "InputTag.Test.C", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_V, "InputTag.Test.V", "");
 
 
 	/** Event */
