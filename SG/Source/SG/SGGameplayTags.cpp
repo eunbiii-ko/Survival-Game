@@ -45,7 +45,12 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Clothes_Bottoms_2, "Cosmetic.Female.Clothes.Bottoms.2", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hair_1, "Cosmetic.Female.Hair.1", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hair, "Cosmetic.Female.Hair", "");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Foot, "Cosmetic.Female.Foot", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Foot_1, "Cosmetic.Female.Foot.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Foot_2, "Cosmetic.Female.Foot.2", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hand, "Cosmetic.Female.Hand", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hand_1, "Cosmetic.Female.Hand.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hand_2, "Cosmetic.Female.Hand.2", "");
 
 	/** Notify */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_Equip_Weapon_Sword, "Notify.Equip.Weapon.Sword", "");
