@@ -24,6 +24,11 @@ public:
 	virtual bool IsSupportedForNetworking() const override { return true; }
 	virtual UWorld* GetWorld() const override final;
 	//~End of UObject interface
+
+	UFUNCTION(BlueprintPure, Category = "Equipment")
+	UObject* GetInstigator() const { return Instigator; }
+
+	void SetInstigator(UObject* InInstigator) { Instigator = InInstigator; }
 	
 	/**
 	 * BP 정의를 위한 Equip/Unequip 함수
