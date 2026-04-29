@@ -28,9 +28,15 @@ FSGCharacterPartHandle FSGCharacterPartList::AddEntry(const FSGCharacterPart& Ne
 		// OwmerComp의 Owner Actor에 Actor끼리 RootComp로 Attach 시킨다.
 		if (SpawnActorForEntry(NewEntry))
 		{
-			OwnerComp->BroadcastChanged();
-			
+			FGameplayTagContainer NewTags;
+			if (IGameplayTagAssetInterface* TagInterface =
+				Cast<IGameplayTagAssetInterface>(NewEntry.SpawnedComp->GetChildActor()))
+			{
+				TagInterface->GetOwnedGameplayTags(NewTags);
+			}
+			OwnerComp->BroadcastChanged(NewTags);
 		}
+
 
 		MarkItemDirty(NewEntry);	
 	}
@@ -111,35 +117,80 @@ void FSGCharacterPartList::PreReplicatedRemove(const TArrayView<int32> RemovedIn
 void FSGCharacterPartList::PostReplicatedAdd(const TArrayView<int32> AddedIndices, int32 FinalSize)
 {
 	bool bCreatedAnyActors = false;
+	FGameplayTagContainer NewlyAddedTags;
+
 	for (int32 Index : AddedIndices)
 	{
 		FSGAppliedCharacterPartEntry& Entry = Entries[Index];
-		bCreatedAnyActors |= SpawnActorForEntry(Entry);
+		if (SpawnActorForEntry(Entry))
+		{
+			bCreatedAnyActors = true;
+			// 전체 Entries 스캔 없이, 지금 막 추가된 Entry의 Tag만 수집
+			if (IGameplayTagAssetInterface* TagInterface =
+				Cast<IGameplayTagAssetInterface>(Entry.SpawnedComp->GetChildActor()))
+			{
+				TagInterface->GetOwnedGameplayTags(NewlyAddedTags);
+			}
+		}
 	}
 
 	if (bCreatedAnyActors && ensure(OwnerComp))
 	{
-		OwnerComp->BroadcastChanged();
+		OwnerComp->BroadcastChanged(NewlyAddedTags);
 	}
+	// bool bCreatedAnyActors = false;
+	// for (int32 Index : AddedIndices)
+	// {
+	// 	FSGAppliedCharacterPartEntry& Entry = Entries[Index];
+	// 	bCreatedAnyActors |= SpawnActorForEntry(Entry);
+	// }
+	//
+	// if (bCreatedAnyActors && ensure(OwnerComp))
+	// {
+	// 	OwnerComp->BroadcastChanged();
+	// }
 }
 
 void FSGCharacterPartList::PostReplicatedChange(const TArrayView<int32> ChangedIndices, int32 FinalSize)
 {
 	bool bChangedAnyActors = false;
+	FGameplayTagContainer ChangedTags;
 
-	// We don't support dealing with propagating changes, just destroy and recreate
 	for (int32 Index : ChangedIndices)
 	{
 		FSGAppliedCharacterPartEntry& Entry = Entries[Index];
-
 		bChangedAnyActors |= DestroyActorForEntry(Entry);
-		bChangedAnyActors |= SpawnActorForEntry(Entry);
+
+		if (SpawnActorForEntry(Entry))
+		{
+			bChangedAnyActors = true;
+			if (IGameplayTagAssetInterface* TagInterface =
+				Cast<IGameplayTagAssetInterface>(Entry.SpawnedComp->GetChildActor()))
+			{
+				TagInterface->GetOwnedGameplayTags(ChangedTags);
+			}
+		}
 	}
 
 	if (bChangedAnyActors && ensure(OwnerComp))
 	{
-		OwnerComp->BroadcastChanged();
+		OwnerComp->BroadcastChanged(ChangedTags);
 	}
+	// bool bChangedAnyActors = false;
+	//
+	// // We don't support dealing with propagating changes, just destroy and recreate
+	// for (int32 Index : ChangedIndices)
+	// {
+	// 	FSGAppliedCharacterPartEntry& Entry = Entries[Index];
+	//
+	// 	bChangedAnyActors |= DestroyActorForEntry(Entry);
+	// 	bChangedAnyActors |= SpawnActorForEntry(Entry);
+	// }
+	//
+	// if (bChangedAnyActors && ensure(OwnerComp))
+	// {
+	// 	OwnerComp->BroadcastChanged();
+	// }
 }
 
 bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entry)
@@ -203,7 +254,8 @@ bool FSGCharacterPartList::SpawnActorForEntry(FSGAppliedCharacterPartEntry& Entr
 			}
 		}
 	}
-	
+
+
 	return bCreatedAnyActor;
 }
 
@@ -258,29 +310,79 @@ void USGPawnComp_CharacterParts::RemoveCharacterPart(FSGCharacterPartHandle Hand
 	CharacterPartList.RemoveEntry(Handle);
 }
 
-void USGPawnComp_CharacterParts::BroadcastChanged()
+void USGPawnComp_CharacterParts::BroadcastChanged(const FGameplayTagContainer& InTags)
 {
 	const bool bReinitPose = true;
 
 	// 현재 Owner의 SkeletalMeshComp를 가져온다.
 	if (USkeletalMeshComponent* MeshComp = GetParentMeshComponent())
 	{
-		// BodyMeshes를 통해, GameplayTag를 활용하여 Tag에 맞은 SkeletalMesh로 재설정한다.
-		// (Tag에 맞는 Mesh가 업으면 DefaultMesh를 반환한다.)
-		// Tag를 가져와서
-		const FGameplayTagContainer MergedTags = GetCombinedTags(FGameplayTag());
 		// Tag에 맞는 Mesh를 가져온다.
-		USkeletalMesh* DesiredMesh = BodyMeshes.SelectBestBodyStyle(MergedTags);
-
-		// SkeletalMesh를 초기화 및 Animation 초기화 시켜준다.
-		MeshComp->SetSkeletalMesh(DesiredMesh, bReinitPose);
-		MeshComp->LinkAnimClassLayers(Layer);
-		UE_LOG(LogSG, Display, TEXT("USGPawnComp_CharacterParts::BroadcastChanged() in %d"), GetOwner()->HasAuthority());
-		
-		// PhysicsAsset을 초기화한다.
-		if (UPhysicsAsset* PhysicsAsset = BodyMeshes.ForcedPhysicsAsset)
 		{
-			MeshComp->SetPhysicsAsset(PhysicsAsset, bReinitPose);
+			FGameplayTagContainer TopTags;
+			TopTags = InTags.Filter(FGameplayTagContainer(SGGameplayTags::Cosmetic_Female_Hair));
+			if (TopTags.IsValid())
+			{
+				USkeletalMesh* DesiredMesh = BodyMeshes.SelectBestBodyStyle(InTags);
+				// SkeletalMesh를 초기화 및 Animation 초기화 시켜준다.
+				MeshComp->SetSkeletalMesh(DesiredMesh, bReinitPose);
+				MeshComp->LinkAnimClassLayers(Layer);
+				UE_LOG(LogSG, Display, TEXT("USGPawnComp_CharacterParts::BroadcastChanged() in %d"), GetOwner()->HasAuthority());
+		
+				// PhysicsAsset을 초기화한다.
+				if (UPhysicsAsset* PhysicsAsset = BodyMeshes.ForcedPhysicsAsset)
+				{
+					MeshComp->SetPhysicsAsset(PhysicsAsset, bReinitPose);
+				}
+			}
+		}
+		
+			
+		// Top/Bottom 전용 서브 메시 컴포넌트 보장
+		EnsureSubMeshComponents();
+
+
+		// Top 태그 필터링 및 적용
+		{
+			FGameplayTagContainer TopTags;
+			TopTags = InTags.Filter(FGameplayTagContainer(SGGameplayTags::Cosmetic_Female_Clothes_Top));
+			if (TopTags.IsValid())
+			{
+				USkeletalMesh* TopMesh = BodyMeshes.SelectBestBodyStyle(TopTags);
+				if (TopMesh && TopMeshComp)
+				{
+					TopMeshComp->SetSkeletalMesh(TopMesh, bReinitPose);
+					TopMeshComp->SetMasterPoseComponent(MeshComp);
+					TopMeshComp->SetVisibility(true, true);
+				}
+				else if (TopMeshComp)
+				{
+					// Top이 없으면 컴포넌트 비활성화 또는 메쉬 제거
+					TopMeshComp->SetSkeletalMesh(nullptr);
+					TopMeshComp->SetVisibility(false, true);
+				}
+			}
+		}
+
+		// Bottom 태그 필터링 및 적용
+		{
+			FGameplayTagContainer BottomTags;
+			BottomTags = InTags.Filter(FGameplayTagContainer(SGGameplayTags::Cosmetic_Female_Clothes_Bottoms));
+			if (BottomTags.IsValid())
+			{
+				USkeletalMesh* BottomMesh = BodyMeshes.SelectBestBodyStyle(BottomTags);
+				if (BottomMesh && BottomMeshComp)
+				{
+					BottomMeshComp->SetSkeletalMesh(BottomMesh, bReinitPose);
+					BottomMeshComp->SetMasterPoseComponent(MeshComp);
+					BottomMeshComp->SetVisibility(true, true);
+				}
+				else if (BottomMeshComp)
+				{
+					BottomMeshComp->SetSkeletalMesh(nullptr);
+					BottomMeshComp->SetVisibility(false, true);
+				}
+			}
 		}
 	}
 
@@ -341,6 +443,40 @@ void USGPawnComp_CharacterParts::OnReadyForEquipWeaponHandler()
 {
 	ServerStartEquipWeapon();
 	
+}
+
+void USGPawnComp_CharacterParts::EnsureSubMeshComponents()
+{
+	if (!GetOwner())
+		return;
+
+	USceneComponent* AttachTarget = GetParentMeshComponent();
+	if (!AttachTarget)
+		AttachTarget = GetOwner()->GetRootComponent();
+
+	if (!TopMeshComp)
+	{
+		TopMeshComp = NewObject<USkeletalMeshComponent>(GetOwner(), TEXT("CharacterPart_TopMesh"));
+		TopMeshComp->SetIsReplicated(false);
+		TopMeshComp->RegisterComponent();
+		TopMeshComp->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform);
+		if (USkeletalMeshComponent* ParentMesh = GetParentMeshComponent())
+		{
+			TopMeshComp->SetMasterPoseComponent(ParentMesh);
+		}
+	}
+
+	if (!BottomMeshComp)
+	{
+		BottomMeshComp = NewObject<USkeletalMeshComponent>(GetOwner(), TEXT("CharacterPart_BottomMesh"));
+		BottomMeshComp->SetIsReplicated(false);
+		BottomMeshComp->RegisterComponent();
+		BottomMeshComp->AttachToComponent(AttachTarget, FAttachmentTransformRules::KeepRelativeTransform);
+		if (USkeletalMeshComponent* ParentMesh = GetParentMeshComponent())
+		{
+			BottomMeshComp->SetMasterPoseComponent(ParentMesh);
+		}
+	}
 }
 
 void USGPawnComp_CharacterParts::ServerStartEquipWeapon_Implementation()

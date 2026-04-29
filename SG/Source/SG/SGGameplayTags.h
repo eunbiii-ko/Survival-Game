@@ -21,6 +21,8 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_0);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_1);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_2);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_Z);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_X);
 
 	
 	/** Event */
@@ -34,10 +36,16 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_2);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_3);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body_4);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Top);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Top_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Top_2);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Top_3);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Top_4);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Bottoms);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Bottoms_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Clothes_Bottoms_2);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Hair_1);
-	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Arm_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Hair);
 
 
 	/** Notify */

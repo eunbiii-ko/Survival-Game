@@ -50,7 +50,14 @@ void USGControllerComp_CharacterParts::ChangeCosmeticPart(FGameplayTag PartTagTo
 	FGameplayTag TagToRemove;
 	for (const FGameplayTag& ExistingTag : CombinedTags)
 	{
-		if (ExistingTag.MatchesTag(PartTagToChange) || PartTagToChange.MatchesTag(ExistingTag))
+		// 완전히 똑같은 Tag면 변경하지 않는다. 
+		if (ExistingTag.MatchesTagExact(PartTagToChange))
+		{
+			return;
+		}
+		
+		const FGameplayTag ExistingParent = ExistingTag.RequestDirectParent();
+		if (ExistingParent.IsValid() && ExistingParent == PartTagToChange.RequestDirectParent())
 		{
 			TagToRemove = ExistingTag;
 			break;
@@ -68,7 +75,7 @@ void USGControllerComp_CharacterParts::ChangeCosmeticPart(FGameplayTag PartTagTo
 			ASGTaggedActor* TaggedActor = Cast<ASGTaggedActor>(CosmeticActor);
 			if (!TaggedActor) continue;
 
-			if (TaggedActor->CosmeticTag.MatchesTagExact(TagToRemove))
+			if (TaggedActor->StaticGameplayTags.HasTag(TagToRemove))
 			{
 				RemoveCharacterPart(EntryIt->Part);
 				break;

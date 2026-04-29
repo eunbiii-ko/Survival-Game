@@ -65,8 +65,11 @@ void USGGA_CosmeticEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	{
 		if (const FSGCharacterPart* Part = CosmeticPartMap.Find(Tag))
 		{
-			// Cosmetic Mesh를 적용한다.
-			CharacterPartControllerComp->ChangeCosmeticPart(Tag, *Part);
+			if (HasAuthority(&ActivationInfo))
+			{
+				// Cosmetic Mesh를 적용한다.
+				CharacterPartControllerComp->ChangeCosmeticPart(Tag, *Part);	
+			}
 		}
 	}
 

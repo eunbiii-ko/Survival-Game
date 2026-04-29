@@ -116,7 +116,7 @@ public:
 	FSGCharacterPartHandle AddCharacterPart(const FSGCharacterPart& NewPart);
 	void RemoveCharacterPart(FSGCharacterPartHandle Handle);
 	
-	void BroadcastChanged();
+	void BroadcastChanged(const FGameplayTagContainer& InTags = FGameplayTagContainer());
 	
 	USkeletalMeshComponent* GetParentMeshComponent() const;
 	USceneComponent* GetSceneComponentToAttachTo() const;
@@ -146,7 +146,7 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerStartEquipWeapon();
 	
-	
+	void EnsureSubMeshComponents();
 private:
 	/** 인스턴스화된 Character Parts */
 	UPROPERTY(Replicated, Transient, meta = (AllowPrivateAccess = true))
@@ -158,6 +158,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UAnimInstance> Layer;
+
+	UPROPERTY(Transient)
+	USkeletalMeshComponent* TopMeshComp = nullptr;
+
+	UPROPERTY(Transient)
+	USkeletalMeshComponent* BottomMeshComp = nullptr;
 };
 
 

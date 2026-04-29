@@ -112,6 +112,8 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_CosmeticTest, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticTest, false);
+					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_Z, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticTop, false);
+					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_X, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticBottom, false);
 
 					TArray<uint32> BindHnaldes;
 					SGIC->BindAbilityActions(InputConfig, this,
@@ -179,13 +181,108 @@ void USGHeroInputComponent::Input_LookMouse(const FInputActionValue& InputAction
 void USGHeroInputComponent::Input_CosmeticTest(const FInputActionValue& InputActionValue)
 {
 	FGameplayEventData Payload;
-	Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Arm_1);
+	if (TopIndex == 0)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_1);
+	}
+	else if (TopIndex == 1)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_2);
+	}
+	else if (TopIndex == 2)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_3);
+	}
+	else if (TopIndex == 3)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_4);
+	}
+
+	if (bBottomIndexPlus)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Bottoms_1);
+	}
+	else 
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Bottoms_2);
+	}
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		GetOwner(),
 		SGGameplayTags::Event_Equip_Cosmetic,
 		Payload
-	);
+	);	
+}
+
+void USGHeroInputComponent::Input_CosmeticTop(const FInputActionValue& InputActionValue)
+{
+	if (bTopIndexPlus)
+	{
+		TopIndex++;
+		
+		if (TopIndex > 3)
+		{
+			bTopIndexPlus = false;
+			TopIndex = 2;
+		}
+	}
+	else
+	{
+		TopIndex--;
+
+		if (TopIndex < 0)
+		{
+			bTopIndexPlus = true;
+			TopIndex = 0;
+		}
+	}
+
+	FGameplayEventData Payload;
+	if (TopIndex == 0)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_1);
+	}
+	else if (TopIndex == 1)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_2);
+	}
+	else if (TopIndex == 2)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_3);
+	}
+	else if (TopIndex == 3)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Top_4);
+	}
+
+
+	// UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+	// 	GetOwner(),
+	// 	SGGameplayTags::Event_Equip_Cosmetic,
+	// 	Payload
+	// );
+}
+
+void USGHeroInputComponent::Input_CosmeticBottom(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Payload;
+	bBottomIndexPlus = !bBottomIndexPlus;
+
+
+	if (bBottomIndexPlus)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Bottoms_1);
+	}
+	else 
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Cosmetic_Female_Clothes_Bottoms_2);
+	}
+
+	// UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+	// 	GetOwner(),
+	// 	SGGameplayTags::Event_Equip_Cosmetic,
+	// 	Payload
+	// );
 }
 
 void USGHeroInputComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)

@@ -41,6 +41,8 @@ protected:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_LookMouse(const FInputActionValue& InputActionValue);
 	void Input_CosmeticTest(const FInputActionValue& InputActionValue);
+	void Input_CosmeticTop(const FInputActionValue& InputActionValue);
+	void Input_CosmeticBottom(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 
@@ -50,4 +52,9 @@ protected:
 	 */
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FSGMappableConfigPair> DefaultInputConfigs;
+
+	int32 TopIndex = 0;
+	bool bTopIndexPlus = true;
+	int32 BottomIndex = 0;
+	bool bBottomIndexPlus = true;
 };
