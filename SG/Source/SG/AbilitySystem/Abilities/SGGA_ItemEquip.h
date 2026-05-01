@@ -6,6 +6,18 @@
 #include "SG/AbilitySystem/Abilities/SGGameplayAbility.h"
 #include "SGGA_ItemEquip.generated.h"
 
+USTRUCT(BlueprintType)
+struct FSGWeaponEquip
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UAnimMontage> EquipMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag EquipTag;
+};
+
 /**
  * 
  */
@@ -26,9 +38,7 @@ protected:
 
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> EquipMontage;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Animation", meta = (AllowPrivateAccess = "true"))
-	FGameplayTag EquipTag;
+	// Key: CosmeticTag, Value: 장착할 CharacterPart
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FGameplayTag, FSGWeaponEquip> WeaponEquipMap;
 };

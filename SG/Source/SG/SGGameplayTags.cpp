@@ -24,11 +24,14 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_X, "InputTag.Test.X", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_C, "InputTag.Test.C", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_V, "InputTag.Test.V", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Test_P, "InputTag.Test.P", "");
 
 
 	/** Event */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Movement_WeaponFire, "Event.Movement.WeaponFire", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip_Cosmetic, "Event.Equip.Cosmetic", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip_Weapon, "Event.Equip.Weapon", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip, "Event.Equip", "");
 
 	
 	/** Cosmetic Tag */
@@ -54,6 +57,12 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hand_1, "Cosmetic.Female.Hand.1", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hand_2, "Cosmetic.Female.Hand.2", "");
 
+
+	/** Weapon Tag */
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Weapon_Sword_OneHand_Small, "Weapon.Sword.OneHand.Small", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Weapon_Sword_OneHand_Big, "Weapon.Sword.OneHand.Big", "");
+	
+	
 	/** Notify */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_Equip_Weapon_Sword, "Notify.Equip.Weapon.Sword", "");
 }

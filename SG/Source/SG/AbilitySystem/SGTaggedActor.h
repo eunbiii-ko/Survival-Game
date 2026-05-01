@@ -25,10 +25,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	UPROPERTY(EditDefaultsOnly)
-	FGameplayTag CosmeticTag;
-
-protected:
 	// Gameplay-related tags associated with this actor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Actor)
 	FGameplayTagContainer StaticGameplayTags;

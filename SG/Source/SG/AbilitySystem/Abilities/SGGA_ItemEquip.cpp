@@ -4,6 +4,7 @@
 #include "SG/AbilitySystem/Abilities/SGGA_ItemEquip.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "SG/SGGameplayTags.h"
 
 USGGA_ItemEquip::USGGA_ItemEquip(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -15,6 +16,14 @@ USGGA_ItemEquip::USGGA_ItemEquip(const FObjectInitializer& ObjectInitializer)
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 
 	ActivationPolicy = ESGAbilityActivationPolicy::OnInputTriggered;
+
+	if (HasAnyFlags(RF_ClassDefaultObject))
+	{
+		FAbilityTriggerData TriggerData;
+		TriggerData.TriggerTag = SGGameplayTags::Event_Equip_Weapon;
+		TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+		AbilityTriggers.Add(TriggerData);	
+	}
 }
 
 void USGGA_ItemEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -26,26 +35,34 @@ void USGGA_ItemEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	if (HasAuthorityOrPredictionKey(ActorInfo, &ActivationInfo))
 	{
 		AActor* AvatarActor = ActorInfo->AvatarActor.Get();
+
+		for (const FGameplayTag& Tag : TriggerEventData->InstigatorTags)
+		{
+			if (const FSGWeaponEquip* Part = WeaponEquipMap.Find(Tag))
+			{
+				UAbilityTask_PlayMontageAndWait* Montage =
+					UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
+				this, NAME_None, Part->EquipMontage, 0.5f);
+				Montage->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
+				Montage->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
+				Montage->ReadyForActivation();
+
+
+
+				UAbilityTask_WaitGameplayEvent* EquipWeaponEvent =
+					UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, Part->EquipTag,
+						nullptr, true, true);
+				EquipWeaponEvent->EventReceived.AddDynamic(this, &ThisClass::EquipWeaponByTag);
+				EquipWeaponEvent->ReadyForActivation();	
+			}
+		}
 		
-		UAbilityTask_PlayMontageAndWait* Montage =
-			UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
-				this, NAME_None, EquipMontage, 1.f);
-		Montage->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
-		Montage->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
-		Montage->ReadyForActivation();
-
-
-
-		UAbilityTask_WaitGameplayEvent* EquipWeaponEvent =
-			UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, EquipTag,
-				nullptr, true, true);
-		EquipWeaponEvent->EventReceived.AddDynamic(this, &ThisClass::EquipWeaponByTag);
-		EquipWeaponEvent->ReadyForActivation();	
 	}
 }
 
 void USGGA_ItemEquip::EquipWeaponByTag_Implementation(FGameplayEventData Data)
 {
+	// index 기반으로 Active하는중. 
 	EquipWeaponByTag(Data);
 }
 

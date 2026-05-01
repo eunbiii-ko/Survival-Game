@@ -116,6 +116,7 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_X, ETriggerEvent::Triggered, this, &ThisClass::Input_CosmeticBottom, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_C, ETriggerEvent::Triggered, this, &ThisClass::Input_C, false);
 					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_Test_V, ETriggerEvent::Triggered, this, &ThisClass::Input_V, false);
+					SGIC->BindNativeAction(InputConfig, SGGameplayTags::InputTag_QuickBar_Weapon_0, ETriggerEvent::Triggered, this, &ThisClass::Input_2, false);
 
 					TArray<uint32> BindHnaldes;
 					SGIC->BindAbilityActions(InputConfig, this,
@@ -313,6 +314,27 @@ void USGHeroInputComponent::Input_C(const FInputActionValue& InputActionValue)
 void USGHeroInputComponent::Input_V(const FInputActionValue& InputActionValue)
 {
 	bFoot = !bFoot;
+}
+
+void USGHeroInputComponent::Input_2(const FInputActionValue& InputActionValue)
+{
+	FGameplayEventData Payload;
+	//bWeaponFlag = !bWeaponFlag;
+
+	if (!bWeaponFlag)
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Weapon_Sword_OneHand_Big);
+	}
+	else 
+	{
+		Payload.InstigatorTags.AddTag(SGGameplayTags::Weapon_Sword_OneHand_Small);
+	}
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		GetOwner(),
+		SGGameplayTags::Event_Equip_Weapon,
+		Payload
+	);
 }
 
 void USGHeroInputComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)

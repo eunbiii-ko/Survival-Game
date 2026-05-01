@@ -45,6 +45,7 @@ protected:
 	void Input_CosmeticBottom(const FInputActionValue& InputActionValue);
 	void Input_C(const FInputActionValue& InputActionValue);
 	void Input_V(const FInputActionValue& InputActionValue);
+	void Input_2(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 
@@ -61,4 +62,5 @@ protected:
 	bool bBottomIndexPlus = true;
 	bool bHand = true;
 	bool bFoot = true;
+	bool bWeaponFlag = true;
 };

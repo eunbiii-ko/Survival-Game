@@ -25,11 +25,14 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_X);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_C);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_V);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_P);
 
 	
 	/** Event */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Movement_WeaponFire);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip_Cosmetic);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip_Weapon);
 
 
 	/** Cosmetic Tag */
@@ -54,6 +57,12 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Hand);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Hand_1);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Female_Hand_2);
+
+
+	/** Weapon Tag */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Sword_OneHand_Small);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Sword_OneHand_Big);
+	
 
 	/** Notify */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Notify_Equip_Weapon_Sword);
