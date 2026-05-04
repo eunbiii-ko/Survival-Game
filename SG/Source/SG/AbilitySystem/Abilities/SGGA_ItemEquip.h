@@ -6,6 +6,8 @@
 #include "SG/AbilitySystem/Abilities/SGGameplayAbility.h"
 #include "SGGA_ItemEquip.generated.h"
 
+class USGInventoryItemDefinition;
+
 USTRUCT(BlueprintType)
 struct FSGWeaponEquip
 {
@@ -16,6 +18,9 @@ struct FSGWeaponEquip
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag EquipTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<USGInventoryItemDefinition> EquipmentDefinition;
 };
 
 /**
@@ -39,6 +44,10 @@ protected:
 
 private:
 	// Key: CosmeticTag, Value: 장착할 CharacterPart
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta= (AllowPrivateAccess = "true"))
 	TMap<FGameplayTag, FSGWeaponEquip> WeaponEquipMap;
+
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TArray<FGameplayTag> EquippedWeaponTags;
+	
 };

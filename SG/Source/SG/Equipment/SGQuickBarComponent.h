@@ -39,8 +39,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetActiveSlotIndex(int32 NewIndex);
 
-	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, BlueprintPure = false)
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	int32 FindSlotIndexByDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDef) const;
+
 	
 private:
 	USGEquipmentManagerComponent* FindEquipmentManager() const;

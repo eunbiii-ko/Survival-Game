@@ -40,6 +40,8 @@ void USGGA_ItemEquip::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		{
 			if (const FSGWeaponEquip* Part = WeaponEquipMap.Find(Tag))
 			{
+				EquippedWeaponTags.Add(Tag);
+				
 				UAbilityTask_PlayMontageAndWait* Montage =
 					UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(
 				this, NAME_None, Part->EquipMontage, 0.5f);
