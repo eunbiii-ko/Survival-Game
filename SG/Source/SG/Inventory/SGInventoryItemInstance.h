@@ -31,7 +31,14 @@ public:
 	{
 		return (ResultClass*)FindFragmentByClass(ResultClass::StaticClass());
 	}
-	
+
+	TSubclassOf<USGInventoryItemDefinition> GetItemDefinition() const
+	{
+		return ItemDefinition;
+	}
+
+
+public:
 	/**
 	 * Inventory Item의 인스턴스에는 무엇으로 정의되어 있는지
 	 * 메타 클래스인 LccInventoryItemDefinition을 들고 있다.

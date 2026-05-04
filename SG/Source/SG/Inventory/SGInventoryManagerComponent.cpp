@@ -95,6 +95,25 @@ void USGInventoryManagerComponent::RemoveItemInstance(USGInventoryItemInstance* 
 	}
 }
 
+USGInventoryItemInstance* USGInventoryManagerComponent::GetFirstItemByDefinition(
+	TSubclassOf<USGInventoryItemDefinition> ItemDefToFind) const
+{
+	for (const FSGInventoryEntry& Entry : InventoryList.Entries)
+	{
+		USGInventoryItemInstance* Instance = Entry.Instance;
+
+		if (IsValid(Instance))
+		{
+			if (Instance->GetItemDefinition() == ItemDefToFind)
+			{
+				return Instance;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 bool USGInventoryManagerComponent::ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch,
                                                        FReplicationFlags* RepFlags)
 {

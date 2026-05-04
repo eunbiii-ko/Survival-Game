@@ -85,6 +85,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Inventory")
 	void RemoveItemInstance(USGInventoryItemInstance* ItemInstance);
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, Category = "Inventory", BlueprintPure)
+	USGInventoryItemInstance* GetFirstItemByDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDefToFind) const; 
 	
 	//~UObject interface
 	virtual bool ReplicateSubobjects(class UActorChannel* Channel, class FOutBunch* Bunch, FReplicationFlags* RepFlags) override;

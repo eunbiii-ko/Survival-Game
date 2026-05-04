@@ -82,6 +82,26 @@ void USGQuickBarComponent::SetActiveSlotIndex_Implementation(int32 NewIndex)
 	}
 }
 
+int32 USGQuickBarComponent::FindSlotIndexByDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDef) const
+{
+	if (ItemDef == nullptr)
+	{
+		return INDEX_NONE;
+	}
+
+	int32 Index = 0;
+	for (const auto& Item : Slots)
+	{
+		if (Item->GetItemDefinition() == ItemDef)
+		{
+			return Index;
+		}
+		Index++;
+	}
+
+	return INDEX_NONE;
+}
+
 USGEquipmentManagerComponent* USGQuickBarComponent::FindEquipmentManager() const
 {
 	if (AController* OwnerController = Cast<AController>(GetOwner()))

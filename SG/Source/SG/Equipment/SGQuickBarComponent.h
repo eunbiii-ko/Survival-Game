@@ -6,6 +6,7 @@
 #include "Components/ControllerComponent.h"
 #include "SGQuickBarComponent.generated.h"
 
+class USGInventoryItemDefinition;
 class USGInventoryItemInstance;
 class USGEquipmentInstance;
 class USGEquipmentManagerComponent;
@@ -31,11 +32,15 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	void AddItemToSlot(int32 SlotIndex, USGInventoryItemInstance* Item);
+	
 	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
 	USGInventoryItemInstance* RemoveItemFromSlot(int32 SlotIndex);
+	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetActiveSlotIndex(int32 NewIndex);
 
+	UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly, BlueprintPure = false)
+	int32 FindSlotIndexByDefinition(TSubclassOf<USGInventoryItemDefinition> ItemDef) const;
 	
 private:
 	USGEquipmentManagerComponent* FindEquipmentManager() const;
