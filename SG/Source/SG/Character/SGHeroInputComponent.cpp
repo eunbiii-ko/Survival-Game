@@ -120,6 +120,7 @@ void USGHeroInputComponent::InitializePlayerInput(UInputComponent* PlayerInputCo
 
 					TArray<uint32> BindHnaldes;
 					SGIC->BindAbilityActions(InputConfig, this,
+						&ThisClass::Input_AbilityInputTagStarted,
 						&ThisClass::Input_AbilityInputTagPressed,
 						&ThisClass::Input_AbilityInputTagReleased, BindHnaldes);
 				}
@@ -319,7 +320,7 @@ void USGHeroInputComponent::Input_V(const FInputActionValue& InputActionValue)
 void USGHeroInputComponent::Input_2(const FInputActionValue& InputActionValue)
 {
 	FGameplayEventData Payload;
-	//bWeaponFlag = !bWeaponFlag;
+	bWeaponFlag = !bWeaponFlag;
 
 	if (!bWeaponFlag)
 	{
@@ -335,6 +336,20 @@ void USGHeroInputComponent::Input_2(const FInputActionValue& InputActionValue)
 		SGGameplayTags::Event_Equip_Weapon,
 		Payload
 	);
+}
+
+void USGHeroInputComponent::Input_AbilityInputTagStarted(FGameplayTag InputTag)
+{
+	if (const APawn* Pawn = GetPawn<APawn>())
+	{
+		if (const USGPawnExtensionComponent* PawnExtComp = USGPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
+		{
+			if (USGAbilitySystemComponent* LyraASC = PawnExtComp->GetSGAbilitySystemComponent())
+			{
+				LyraASC->AbilityInputTagStarted(InputTag);
+			}
+		}
+	}
 }
 
 void USGHeroInputComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)

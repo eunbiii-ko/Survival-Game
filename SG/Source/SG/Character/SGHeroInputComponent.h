@@ -46,6 +46,7 @@ protected:
 	void Input_C(const FInputActionValue& InputActionValue);
 	void Input_V(const FInputActionValue& InputActionValue);
 	void Input_2(const FInputActionValue& InputActionValue);
+	void Input_AbilityInputTagStarted(FGameplayTag InputTag);
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 

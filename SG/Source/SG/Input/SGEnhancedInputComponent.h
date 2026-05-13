@@ -25,9 +25,9 @@ public:
 	void BindNativeAction(const USGInputConfig* InputConfig, const FGameplayTag& InputTag,
 		ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func, bool bLogIfNotFound);
 
-	template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+	template <class UserClass, typename StartedFuncType, typename PressedFuncType, typename ReleasedFuncType>
 	void BindAbilityActions(const USGInputConfig* InputConfig, UserClass* Object,
-		PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
+		StartedFuncType StartedFunc, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
 		TArray<uint32>& BindHandles);
 };
 
@@ -45,9 +45,10 @@ void USGEnhancedInputComponent::BindNativeAction(const USGInputConfig* InputConf
 	}
 }
 
-template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
+template <class UserClass, typename StartedFuncType, typename PressedFuncType, typename ReleasedFuncType>
 void USGEnhancedInputComponent::BindAbilityActions(const USGInputConfig* InputConfig, UserClass* Object,
-	PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc, TArray<uint32>& BindHandles)
+	StartedFuncType StartedFunc, PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
+	TArray<uint32>& BindHandles)
 {
 	check(InputConfig);
 
@@ -56,6 +57,10 @@ void USGEnhancedInputComponent::BindAbilityActions(const USGInputConfig* InputCo
 	{
 		if (Action.InputAction && Action.InputTag.IsValid())
 		{
+			if (StartedFunc)
+			{
+				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Started, Object, StartedFunc, Action.InputTag).GetHandle());
+			}
 			if (PressedFunc)
 			{
 				BindHandles.Add(BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.InputTag).GetHandle());

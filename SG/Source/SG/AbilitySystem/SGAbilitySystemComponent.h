@@ -21,13 +21,17 @@ public:
 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 	//~ End of AbilitySystemComponent's interface
 
+	virtual void AbilitySecInputStarted(FGameplayAbilitySpec& Spec);
+	
 	//~ member methods
+	void AbilityInputTagStarted(const FGameplayTag& InputTag);
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	void ProcessAbilityInput(float DeltaTime, bool bGamePaused);
 	//~ End of member methods
 	
 	/** Ability Input을 처리할 Pending Queue */
+	TArray<FGameplayAbilitySpecHandle> InputStartedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputPressedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputReleasedSpecHandles;
 	TArray<FGameplayAbilitySpecHandle> InputHeldSpecHandles;

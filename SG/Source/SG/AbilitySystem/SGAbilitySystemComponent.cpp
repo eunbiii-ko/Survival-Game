@@ -25,7 +25,33 @@ void USGAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AActo
 	{
 		if (USGAnimInstance* AnimInst = Cast<USGAnimInstance>(ActorInfo->GetAnimInstance()))
 		{
+			// AbilityActorInfo가 변경될 때 마다 변경된 Actor의 AnimInstance에 ASC를 등록한다. 
 			AnimInst->InitializeWithAbilitySystem(this);
+		}
+	}
+}
+
+void USGAbilitySystemComponent::AbilitySecInputStarted(FGameplayAbilitySpec& Spec)
+{
+	// We don't support UGameplayAbility::bReplicateInputDirectly.
+	// Use replicated events instead so that the WaitInputRelease ability task works.
+	if (Spec.IsActive())
+	{
+		// Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
+		InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, Spec.ActivationInfo.GetActivationPredictionKey());
+	}
+}
+
+void USGAbilitySystemComponent::AbilityInputTagStarted(const FGameplayTag& InputTag)
+{
+	if (InputTag.IsValid())
+	{
+		for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
+		{
+			if (AbilitySpec.Ability && (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)))
+			{
+				InputStartedSpecHandles.AddUnique(AbilitySpec.Handle);
+			}
 		}
 	}
 }
@@ -90,6 +116,20 @@ void USGAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGameP
 		}
 	}
 
+	for (const FGameplayAbilitySpecHandle& SpecHandle : InputStartedSpecHandles)
+	{
+		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
+		{
+			if (AbilitySpec->Ability)
+			{
+				if (AbilitySpec->IsActive())
+				{
+					AbilitySecInputStarted(*AbilitySpec);
+				}
+			}
+		}
+	}
+
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputPressedSpecHandles)
 	{
 		if (FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle))
@@ -143,4 +183,5 @@ void USGAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGameP
 	// 이번 프레임이 끝났으므로, InputPressedSpecHandles와 InputReleasedSpecHandles를 초기화한다.
 	InputPressedSpecHandles.Reset();
 	InputReleasedSpecHandles.Reset();
+	InputStartedSpecHandles.Reset();
 }
