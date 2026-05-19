@@ -18,6 +18,11 @@ ASGPlayerState::ASGPlayerState(const FObjectInitializer& ObjectInitializer)
 {
 	AbilitySystemComp = ObjectInitializer.CreateDefaultSubobject<USGAbilitySystemComponent>
 							(this, TEXT("AbilitySystemComp"));
+	AbilitySystemComp->SetIsReplicated(true);
+	AbilitySystemComp->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+
+	NetUpdateFrequency = 100.f;
+	bAlwaysRelevant = true;
 }
 
 void ASGPlayerState::PostInitializeComponents()
