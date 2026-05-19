@@ -15,7 +15,7 @@ namespace SGGameplayTags
 	/*** Input Tag */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Move, "InputTag.Move", "Move input.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Look_Mouse, "InputTag.Look.Mouse", "Look (mouse) input.");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Weapon_Fire, "InputTag.Weapon.Fire", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Weapon_BasicAttack, "InputTag.Weapon.BasicAttack", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_CosmeticTest, "InputTag.CosmeticTest", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_0, "InputTag.QuickBar.Weapon.0", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_QuickBar_Weapon_1, "InputTag.QuickBar.Weapon.1", "");
@@ -32,7 +32,17 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip_Cosmetic, "Event.Equip.Cosmetic", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip_Weapon, "Event.Equip.Weapon", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Equip, "Event.Equip", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Check_Combo, "Event.Check.Combo", "");
 
+
+	/** Ability */
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Shared_Equip_Weapon, "Ability.Shared.Equip.Weapon", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Shared_NormalAttack, "Ability.Shared.NormalAttack", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Shared_NormalAttack_1, "Ability.Shared.NormalAttack.1", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Shared_NormalAttack_2, "Ability.Shared.NormalAttack.2", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Shared_NormalAttack_3, "Ability.Shared.NormalAttack.3", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Shared_NormalAttack_4, "Ability.Shared.NormalAttack.4", "");
+	
 	
 	/** Cosmetic Tag */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Body, "Cosmetic.Body", "");
@@ -58,11 +68,22 @@ namespace SGGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cosmetic_Female_Hand_2, "Cosmetic.Female.Hand.2", "");
 
 
+	/** Status */
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Status_Blocking, "Status.Blocking", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Status_Attack, "Status.Attack", "");
+
+
 	/** Weapon Tag */
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Weapon_Sword_OneHand_Small, "Weapon.Sword.OneHand.Small", "");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Weapon_Sword_OneHand_Big, "Weapon.Sword.OneHand.Big", "");
 	
 	
-	/** Notify */
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_Equip_Weapon_Sword, "Notify.Equip.Weapon.Sword", "");
+
+
+	/** Notify */
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_Begin, "Notify.Begin", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_Tick, "Notify.Tick", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Notify_End, "Notify.End", "");
 }

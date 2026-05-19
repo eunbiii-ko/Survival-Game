@@ -16,7 +16,7 @@ namespace SGGameplayTags
 	/*** Input Tag */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look_Mouse);
-	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Fire);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_BasicAttack);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_CosmeticTest);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_0);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_QuickBar_Weapon_1);
@@ -27,13 +27,28 @@ namespace SGGameplayTags
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_V);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Test_P);
 
+
+	/** Status */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Blocking);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Status_Attack);
+
 	
 	/** Event */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Movement_WeaponFire);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip_Cosmetic);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip);
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Equip_Weapon);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Check_Combo);
 
+
+	/** Ability */
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_Equip_Weapon);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_NormalAttack);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_NormalAttack_1);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_NormalAttack_2);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_NormalAttack_3);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Shared_NormalAttack_4);
+	
 
 	/** Cosmetic Tag */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cosmetic_Body);
@@ -66,4 +81,7 @@ namespace SGGameplayTags
 
 	/** Notify */
 	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Notify_Equip_Weapon_Sword);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Notify_Begin);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Notify_Tick);
+	SG_API	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Notify_End);
 }

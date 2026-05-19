@@ -19,8 +19,9 @@ public:
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
-	
+	virtual void HandleMontageEvent(FGameplayEventData Payload);
+	UFUNCTION()
+	void OnMontageEventTriggered(FGameplayEventData Payload);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "SG | Melee Attack")
